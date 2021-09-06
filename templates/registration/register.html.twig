@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | créer un compte{% endblock %}
+
+{% block body %}
+    <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
+        <h1 class="text-center">Créer un compte</h1>
+        {{ form_start(registrationForm) }}
+        {{ form_widget(registrationForm) }}
+        <button type="submit" class="btn btn-outline-success my-5">Créer un compte</button>
+        {{ form_end(registrationForm) }}
+    </div>
+
+
+
+{% endblock %}
