@@ -8,7 +8,9 @@
         <h4>Participant : {{ app.user.prenom ~ ' ' ~ app.user.nom }} </h4>
     </div>
     <h4>Filtrer les sorties</h4>
-    <form class="row">
+
+
+    {# <form class="row" method="#">
         <div class="col-4 pe-5">
             <div class="row justify-content-between mt-3 mb-3">
                 <label for="campus" class="col-4">Campus : </label>
@@ -60,7 +62,72 @@
         <div class="col-4 align-self-center row justify-content-around">
             <button type="submit" class="col-5 btn btn-dark btn-lg">Rechercher</button>
         </div>
-    </form>
+    </form> #}
+
+
+    {# Debut du formulaire #}
+
+
+    {{ form_start(rechercheForm, {
+        'attr':{
+            'class': 'row',
+        }
+    }) }}
+
+    <div class="col-4 pe-5">
+        <div class="row justify-content-between mt-3 mb-3">
+            <div class="col-4">
+                {{ form_label(rechercheForm.campus) }}
+            </div>
+            {{ form_widget(rechercheForm.campus) }}
+        </div>
+        <div class="row justify-content-between mt-3 mb-3">
+            <div class="col-5">
+                {{ form_label(rechercheForm.nom) }}
+            </div>
+            {{ form_widget(rechercheForm.nom) }}
+        </div>
+        <div class="row justify-content-between mt-3 mb-3">
+            <div class="col-3">
+                {{ form_label(rechercheForm.debut) }}
+            </div>
+            {{ form_widget(rechercheForm.debut) }}
+        </div>
+        <div class="row justify-content-between mt-3 mb-3">
+            <div class="col-3">
+                {{ form_label(rechercheForm.fin) }}
+            </div>
+            {{ form_widget(rechercheForm.fin) }}
+        </div>
+    </div>
+
+    <div class="column col-4 align-self-center form-check ps-5">
+        <div class="mb-1">
+            {{ form_label(rechercheForm.organisateur) }}
+            {{ form_widget(rechercheForm.organisateur) }}
+        </div>
+        <div class="mb-1">
+            {{ form_label(rechercheForm.inscrit) }}
+            {{ form_widget(rechercheForm.inscrit) }}
+        </div>
+        <div class="mb-1">
+            {{ form_label(rechercheForm.noninscrit) }}
+            {{ form_widget(rechercheForm.noninscrit) }}
+        </div>
+        <div class="mb-1">
+            {{ form_label(rechercheForm.passees) }}
+            {{ form_widget(rechercheForm.passees) }}
+        </div>
+    </div>
+    <div class="col-4 align-self-center row justify-content-around">
+        <button type="submit" class="col-5 btn btn-dark btn-lg">Rechercher</button>
+    </div>
+
+    {{ form_end(rechercheForm) }}
+
+
+    {# Fin du formulaire #}
+
 
     <div class="col-12 my-5">
         <table class="table table-dark table-striped">
