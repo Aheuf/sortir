@@ -4,6 +4,6 @@
     <a class="nav-link link-light" href="#">Ville</a>
     <a class="nav-link link-light" href="#">Campus</a>
     {% endif %}
-    <a class="nav-link link-light" href="#">Mon profil</a>
+    <a class="nav-link link-light" href="{{ path('app_account_show',{id:app.user.id}) }}">Mon profil</a>
     <a class="nav-link link-light me-5" href="#">Deconnexion</a>
 </nav>

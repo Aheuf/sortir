@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
+        <h1 class="text-center mt-5">Modifier mon compte</h1>
+        {{ form_start(UpdateAccountForm) }}
+
+            {{ form_row(UpdateAccountForm.nom, {value:app.user.nom}) }}
+            {{ form_row(UpdateAccountForm.prenom, {value:app.user.prenom}) }}
+            {{ form_row(UpdateAccountForm.email, {value:app.user.email}) }}
+            {{ form_row(UpdateAccountForm.telephone, {value:app.user.telephone}) }}
+            {{ form_row(UpdateAccountForm.avatar, {value:app.user.avatar}) }}
+            {{ form_row(UpdateAccountForm.estRattacheA, {value:app.user.estRattacheA}) }}
+
+            <button class="btn btn-outline-secondary my-3">Modifier</button>
+        {{ form_end(UpdateAccountForm) }}
+    </div>
+
+{% endblock %}
+
+{% block title %}
+{{ parent() }} update account
+{% endblock %}
+
