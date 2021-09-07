@@ -52,7 +52,7 @@ class SortieController extends AbstractController
             $sortie->setNbInscriptionMax(true);
             $sortie->setDuree(true);
             $sortie->setInfoSortie(true);
-
+            //d'autre à rajouter???
 
             //sauvegarde en bdd
             $entityManager->persist($sortie);
@@ -83,7 +83,7 @@ class SortieController extends AbstractController
 
         return $this->render('sortie/list.html.twig', [
             //les passe à Twig
-            "sorties" => $sorties
+            //////////////"sorties" => $sorties
         ]);
     }
 
@@ -113,19 +113,19 @@ class SortieController extends AbstractController
         //todo
 
         return $this->render('sortie/delete.html.twig', [
-            "sortie" => $sortie
+            /////////////"sortie" => $sortie
         ]);
     }
 
     /**
-     * @Route("/sortie/modifier_sortie/{id}", name="modifier_annuler")
+     * @Route("/sortie/modifier_sortie/{id}", name="sortie_modifier")
      */
     public function modify(int $id, SortieRepository $sortieRepository): Response
     {
         //todo
 
         return $this->render('sortie/modify.html.twig', [
-            "sortie" => $sortie
+            /////////"sortie" => $sortie
         ]);
     }
 }
