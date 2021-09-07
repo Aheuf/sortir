@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Participant;
+use App\Entity\Campus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -16,15 +17,26 @@ class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $niort = new Campus();
+            $niort->setNom('Niort');
+        $nantes = new Campus();
+            $nantes->setNom('Nantes');
+        $quimper = new Campus();
+            $quimper->setNom('Quimper');
+        $rennes = new Campus();
+            $rennes->setNom('Rennes');
+
         $builder
             ->add('nom',null, ['attr'=>['class'=>'form-control']])
             ->add('prenom',null, ['attr'=>['class'=>'form-control']])
             ->add('avatar',FileType::class,['attr'=>['class'=>'form-control']])
             ->add('estRattacheA',ChoiceType::class,['attr'=>['class'=>'form-select'],
-                'choices'=>['Nantes'=>1,
-                            'Rennes'=>3,
-                            'Quimper'=>4,
-                            'Niort'=>5]])
+                'choices'=>[$niort,
+                            $nantes,
+                            $quimper,
+                            $rennes],
+                'choice_value'=> 'nom',
+                'choice_label'=>function(?Campus $campus){return $campus->getNom();}])
             ->add('telephone',null, ['attr'=>['class'=>'form-control']])
             ->add('email',null, ['attr'=>['class'=>'form-control']])
             ->add('plainPassword', PasswordType::class, ['label'=>'mot de passe',
