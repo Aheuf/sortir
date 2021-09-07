@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Gestion des Villes !{% endblock %}
+
+{{ form_start(VilleType) }}
+    {{ form_widget(VilleType) }}
+<button type="submit" class="btn">Enregistrer</button>
+{{ form_end(VilleType) }}
+
+
+{% block body %}
+
+{% endblock %}
