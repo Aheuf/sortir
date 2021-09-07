@@ -47,4 +47,23 @@ class VilleRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findVillesByName(string $query)
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->orX(
+                        $qb->expr()->like('p.nom', ':query'),
+                        $qb->expr()->like('p.codePostal', ':query')
+                    )
+                )
+            )
+            ->setParameter('query', '%' . $query . '%');
+        return $qb
+            ->getQuery()
+            ->getResult();
+    }
+
 }

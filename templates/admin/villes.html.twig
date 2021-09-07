@@ -2,12 +2,53 @@
 
 {% block title %}{{ parent() }} | Gestion des Villes !{% endblock %}
 
-{{ form_start(VilleType) }}
-    {{ form_widget(VilleType) }}
-<button type="submit" class="btn">Enregistrer</button>
-{{ form_end(VilleType) }}
 
 
 {% block body %}
+    <br>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+    <br>
+    <div class="table-responsive">
 
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Villes</th>
+                <th>Code Postal</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for ville in villes %}
+                <tr>
+                    <form method="post" action="{{ path('admin_update_ville',{'id':ville.id}) }}">
+                        <td><input type="text" name="ville{{ ville.id }}" class="form-control-plaintext"
+                                   value="{{ ville.nom }}"></td>
+                        <td><input type="text" name="cp{{ ville.id }}" class="form-control-plaintext"
+                                   value="{{ ville.codePostal }}"></td>
+                        <td>
+                            <button type="submit" class="btn btn-success">Modification</button>
+                            <a class="btn btn-warning"
+                               href="{{ path('admin_delete_ville',{'id':ville.id}) }}">Delete</a>
+                        </td>
+                    </form>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                {{ form_start(VilleForm) }}
+                <td>{{ form_row(VilleForm.nom) }}</td>
+                <td>{{ form_row(VilleForm.codePostal) }}</td>
+                <td>
+                    <button type="submit" class="btn btn-success">Enregistrer</button>
+                </td>
+                {{ form_end(VilleForm) }}
+            </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
