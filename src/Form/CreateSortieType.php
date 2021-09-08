@@ -27,8 +27,8 @@ class CreateSortieType extends AbstractType
 
             //->add('lieuSortie')
 
-            ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
-            ->add('publish', SubmitType::class, ['label' => 'Publier une sortie'])
+            //->add('save', SubmitType::class, ['label' => 'Enregistrer'])
+            //->add('publish', SubmitType::class, ['label' => 'Publier une sortie'])
         ;
     }
 

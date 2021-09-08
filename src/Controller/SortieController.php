@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
 use App\Repository\SortieRepository;
@@ -52,20 +53,30 @@ class SortieController extends AbstractController
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
 
+            /*
             $sortie->setEtat($sortieForm->get('save')->isClicked()
-                ? 'En création'
-                : 'En cours'
+                ? 1
+                : 2
             );
+            */
+
+            //On récupère l'info de l'état pour le passer dans celui de la sortie créé
+            $tableauEtat = $this->getDoctrine()
+                ->getRepository(Etat::class)
+                ->find(1);
+
+            $sortie -> setEtat($tableauEtat);
+
 
             //sauvegarde en bdd
             $entityManager->persist($sortie);
             $entityManager->flush();
 
             //affiche un message sur la prochaine page
-            $this->addFlash('success', 'La sortie a été ajouté avec succès!');
+            $this->addFlash('success', 'La sortie a été ajoutée avec succès!');
 
-            //redirige vers la page de détails de l'idée fraîchement créée
-            return $this->redirectToRoute('detail_sortie', ['id' => $sortie->getId()]);
+            //redirige vers la page de détails de la sortie fraîchement créée
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
 
         //affiche le formulaire
