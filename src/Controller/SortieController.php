@@ -12,23 +12,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class SortieController extends AbstractController
 {
     /**
      * @Route("/sortie", name="sortie")
      */
-    public function index(Request $request, SortieRepository $sortieRepository): Response
+    public function index(Request $request, SortieRepository $sortieRepository, Security $security): Response
     {
         $sorties = $sortieRepository->findAll();
         $rechercheForm = $this->createForm(rechercheType::class);
 
         if($rechercheForm->handleRequest($request)->isSubmitted()) {
             $sortiesData = $rechercheForm->getData();
-            $sorties = $sortieRepository->findByResearch($sortiesData);
-            dd($sorties);
+            $sorties = $sortieRepository->findByResearch($sortiesData, $security);
         }
-
 
         return $this->render('sortie/index.html.twig', [
             'rechercheForm' => $rechercheForm->createView(),

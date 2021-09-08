@@ -119,6 +119,7 @@
             {{ form_widget(rechercheForm.passees) }}
         </div>
     </div>
+
     <div class="col-4 align-self-center row justify-content-around">
         <button type="submit" class="col-5 btn btn-dark btn-lg">Rechercher</button>
     </div>
@@ -144,56 +145,20 @@
             </tr>
             </thead>
             <tbody>
+
+            {% for sortie in sorties %}
             <tr>
-                <th scope="col">Philo</th>
-                <th scope="col">19/07/2018</th>
-                <th scope="col">18/07/2018</th>
-                <th scope="col">3/5</th>
-                <th scope="col">En cours</th>
+                <th scope="col">{{ sortie.getnom() }}</th>
+                <th scope="col">{{ sortie.getDateHeureDebut()|date('d-m-Y') }}</th>
+                <th scope="col">{{ sortie.getDateLimiteInscription()|date('d-m-Y') }}</th>
+                <th scope="col">{{ sortie.getParticipants()|length ~'/'~ sortie.getNbInscriptionMax() }}</th>
+                <th scope="col">{{ sortie.getEtat() }}</th>
                 <th scope="col"></th>
-                <th scope="col">Spinoz A.</th>
-                <th scope="col">Afficher</th>
-            </tr>
-            <tr>
-                <th scope="col">Philo</th>
-                <th scope="col">19/07/2018</th>
-                <th scope="col">18/07/2018</th>
-                <th scope="col">3/5</th>
-                <th scope="col">En cours</th>
                 <th scope="col"></th>
-                <th scope="col">Spinoz A.</th>
-                <th scope="col">Afficher</th>
-            </tr>
-            <tr>
-                <th scope="col">Philo</th>
-                <th scope="col">19/07/2018</th>
-                <th scope="col">18/07/2018</th>
-                <th scope="col">3/5</th>
-                <th scope="col">En cours</th>
                 <th scope="col"></th>
-                <th scope="col">Spinoz A.</th>
-                <th scope="col">Afficher</th>
             </tr>
-            <tr>
-                <th scope="col">Philo</th>
-                <th scope="col">19/07/2018</th>
-                <th scope="col">18/07/2018</th>
-                <th scope="col">3/5</th>
-                <th scope="col">En cours</th>
-                <th scope="col"></th>
-                <th scope="col">Spinoz A.</th>
-                <th scope="col">Afficher</th>
-            </tr>
-            <tr>
-                <th scope="col">Philo</th>
-                <th scope="col">19/07/2018</th>
-                <th scope="col">18/07/2018</th>
-                <th scope="col">3/5</th>
-                <th scope="col">En cours</th>
-                <th scope="col"></th>
-                <th scope="col">Spinoz A.</th>
-                <th scope="col">Afficher</th>
-            </tr>
+            {% endfor %}
+
             </tbody>
         </table>
     </div>
