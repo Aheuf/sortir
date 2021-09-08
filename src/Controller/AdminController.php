@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
 use App\Entity\Ville;
+use App\Form\CampusType;
 use App\Form\VilleType;
 use App\Repository\CampusRepository;
 use App\Repository\VilleRepository;
@@ -21,36 +23,37 @@ class AdminController extends AbstractController
 {
 
     /**
-     * @Route("", name="villes")
+     * @Route("/villes", name="villes")
      */
     public function villes(VilleRepository $villeRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createFormBuilder()
             ->add('query', TextType::class, [
-                'label' => 'Le nom contient ',
+                'label' => false,
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Entrez un mot-clé'
                 ]
             ])
             ->add('recherche', SubmitType::class, [
-                'attr' => ['class' => 'btn btn-primary']
+                'attr' => [
+
+                    'class' => 'btn btn-outline-secondary']
             ])
             ->getForm();
 
 
-        $ville = $villeRepository->findBy([], ['nom' => 'DESC']);
         $createVille = new Ville();
         $VilleForm = $this->createForm(VilleType::class, $createVille);
         $VilleForm->handleRequest($request);
 
-        if ($request->request->get('form')['query'] !== null) {
+        if (isset($request->request->get('form')['query'])) {
             $query = $request->request->get('form')['query'];
             $ville = $villeRepository->findVillesByName($query);
 
-            return $this->render('admin/villes.html.twig', [
-                'villes' => $ville, 'VilleForm' => $VilleForm->createView(), 'form' => $form->createView()
-            ]);
+        } else {
+            $ville = $villeRepository->findBy([], ['nom' => 'DESC']);
+
         }
 
 
@@ -100,16 +103,78 @@ class AdminController extends AbstractController
 
 
     /**
-     * @Route("", name="campus")
+     * @Route("/campus", name="campus")
      */
-    public function campus(CampusRepository $campusRepository): Response
+    public function campus(CampusRepository $campusRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $campus = $campusRepository->findAll();
+        $form = $this->createFormBuilder()
+            ->add('query', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Entrez un mot-clé'
+                ]
+            ])
+            ->add('recherche', SubmitType::class, [
+                'attr' => [
+
+                    'class' => 'btn btn-outline-secondary']
+            ])
+            ->getForm();
+
+        $createCampus = new Campus();
+        $CampusForm = $this->createForm(CampusType::class, $createCampus);
+        $CampusForm->handleRequest($request);
+
+        if (isset($request->request->get('form')['query'])) {
+            $query = $request->request->get('form')['query'];
+            $campus = $campusRepository->findCampusByName($query);
+
+        } else {
+            $campus = $campusRepository->findBy([], ['nom' => 'DESC']);
+
+        }
+
+        if ($CampusForm->isSubmitted() && $CampusForm->isValid()) {
+            $entityManager->persist($createCampus);
+            $entityManager->flush();
+
+            return $this->redirect($_SERVER['HTTP_REFERER']);
+        }
 
         return $this->render('admin/campus.html.twig', [
-            'campus' => $campus,
+            'campus' => $campus, 'CampusForm' => $CampusForm->createView(), 'formCampus' => $form->createView()
         ]);
+
     }
 
+
+    /**
+     * @Route("/update_campus/{id}", name="update_campus")
+     */
+    public function UpdateCampus(Request $request, int $id): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $ville = $em->getRepository('App:Campus')->find($id);
+        $valeurCampus = "campus" . $id;
+        $valeurCp = "cp" . $id;
+        $changementNomCampus = $_POST[($valeurCampus)];
+        $ville->setNom($changementNomCampus);
+        $em->flush();
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
+
+    /**
+     * @Route("/delete_campus/{id}", name="delete_campus")
+     */
+    public function DeleteCampus(int $id): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $campus = $em->getRepository('App:Campus')->find($id);
+        $em->remove($campus);
+        $em->flush();
+
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
 
 }

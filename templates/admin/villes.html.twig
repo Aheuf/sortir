@@ -6,14 +6,22 @@
 
 {% block body %}
     <br>
+    <h2 class="text-center">Gerer les Villes</h2>
+    <h3>Filtrer les Villes: </h3>
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <div class="input-group mb-3">
+        {{ form_row(form.recherche) }}
+        {{ form_row(form.query) }}
+    </div>
+    <a
+       href="{{ path('admin_villes') }}">Retirer filtre</a>
+
     {{ form_end(form) }}
+
+
     <br>
     <div class="table-responsive">
-
-
-        <table class="table">
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th>Villes</th>
@@ -31,9 +39,9 @@
                         <td><input type="text" name="cp{{ ville.id }}" class="form-control-plaintext"
                                    value="{{ ville.codePostal }}"></td>
                         <td>
-                            <button type="submit" class="btn btn-success">Modification</button>
-                            <a class="btn btn-warning"
-                               href="{{ path('admin_delete_ville',{'id':ville.id}) }}">Delete</a>
+                            <button type="submit" class="btn btn-success"><i class="bi bi-pencil"></i></button>
+                            <a class="btn btn-danger"
+                               href="{{ path('admin_delete_ville',{'id':ville.id}) }}"><i class="bi bi-trash"></i></a>
                         </td>
                     </form>
                 </tr>
@@ -44,7 +52,7 @@
                 <td>{{ form_row(VilleForm.nom) }}</td>
                 <td>{{ form_row(VilleForm.codePostal) }}</td>
                 <td>
-                    <button type="submit" class="btn btn-success">Enregistrer</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i></button>
                 </td>
                 {{ form_end(VilleForm) }}
             </tr>

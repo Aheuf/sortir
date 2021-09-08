@@ -4,7 +4,56 @@
 
 
 {% block body %}
+    <br>
+    <h2 class="text-center">Gerer les Campus</h2>
+    <h3>Filtrer les Campus: </h3>
+    {{ form_start(formCampus) }}
+    <div class="input-group mb-3">
+        {{ form_row(formCampus.recherche) }}
+        {{ form_row(formCampus.query) }}
+    </div>
+    <a
+            href="{{ path('admin_campus') }}">Retirer filtre</a>
 
+    {{ form_end(formCampus) }}
+
+
+    <br>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Villes</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for Campus in campus %}
+                <tr>
+                    <form method="post" action="{{ path('admin_update_campus',{'id':Campus.id}) }}">
+                        <td><input type="text" name="campus{{ Campus.id }}" class="form-control-plaintext"
+                                   value="{{ Campus.nom }}"></td>
+                        <td>
+                            <button type="submit" class="btn btn-success"><i class="bi bi-pencil"></i></button>
+                            <a class="btn btn-danger"
+                               href="{{ path('admin_delete_campus',{'id':Campus.id}) }}"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </form>
+                </tr>
+            {% endfor %}
+
+            <tr>
+                {{ form_start(CampusForm) }}
+                <td>{{ form_row(CampusForm.nom) }}</td>
+                <td>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i></button>
+                </td>
+                {{ form_end(CampusForm) }}
+            </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 
 

@@ -11,10 +11,10 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Ville</a>
+                                <a class="nav-link" href="{{ path('admin_villes') }}">Ville</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Campus</a>
+                                <a class="nav-link" href="{{ path('admin_campus') }}">Campus</a>
                             </li>
                         {% endif %}
                         <li class="nav-item">
