@@ -34,14 +34,16 @@ class AccountController extends AbstractController
         $form =$this->createForm(UpdateAccountType::class,$user);
         $user = $repository->find($id);
         $form->handleRequest($request);
+        $allCampus = $campusRepository->findAll();
 
         if ($form->isSubmitted()){
                                                 //gestion rattachement campus
-            $campus = $campusRepository->findOneBy(['nom'=>strtoupper($form['estRattacheA']->getData()->getNom())]);
+            $campus = $campusRepository->findOneBy(['id'=>$request->get('campus')]);
             $user->setEstRattacheA($campus);
 
             $user->setNom($form['nom']->getData());
             $user->setPrenom($form['prenom']->getData());
+            $user->setPseudo($form['pseudo']->getData());
             $user->setEmail($form['email']->getData());
             $user->setTelephone($form['telephone']->getData());
 
@@ -61,6 +63,6 @@ class AccountController extends AbstractController
             return $this->redirectToRoute('app_account_show',['id' => $id]);
         }
 
-        return $this->render('account/update.html.twig',['user'=>$user, 'UpdateAccountForm' => $form->createView()]);
+        return $this->render('account/update.html.twig',['user'=>$user, 'UpdateAccountForm' => $form->createView(), 'allCampus' => $allCampus]);
     }
 }

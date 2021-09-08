@@ -9,10 +9,13 @@
         {% if user.id == app.user.id %}
             <h1 class="text-center mt-5">Mon compte</h1>
             <hr>
+        {% else %}
+            <h1>{{ user.pseudo }}</h1>
         {% endif %}
 
         <div>
             <h2>{{ user.nom }} {{ user.prenom }}</h2>
+            <p>alias : {{ user.pseudo }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.telephone }}</p>
             <p>du campus de {{ campus.nom }} </p>

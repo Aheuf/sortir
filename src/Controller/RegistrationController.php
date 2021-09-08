@@ -20,7 +20,7 @@ class RegistrationController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, CampusRepository $repository): Response
     {
         $user = new Participant();
-        $campus = new Campus();
+        $allCampus = $repository->findAll();
 
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -29,7 +29,8 @@ class RegistrationController extends AbstractController
             $user->setAdministrateur(0);
             $user->setActif(1);
                                             //gestion rattachement campus
-            $campus = $repository->findOneBy(['nom'=>strtoupper($form['estRattacheA']->getData()->getNom())]);
+
+            $campus = $repository->findOneBy(['id'=>$request->get('campus')]);
             $user->setEstRattacheA($campus);
                                                 //gestion de l'image
             $nbRand = random_int(1000000000,2000000000);
@@ -59,7 +60,7 @@ class RegistrationController extends AbstractController
         }
 
         return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
+            'registrationForm' => $form->createView(), 'allCampus'=>$allCampus
         ]);
     }
 }

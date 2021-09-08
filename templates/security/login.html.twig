@@ -3,6 +3,7 @@
 {% block title %}{{ parent() }} | Connexion !{% endblock %}
 
 {% block body %}
+    <link rel="stylesheet" href="{{ asset('css/logs.css') }}">
     <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
         <form method="post">
             {% if error %}
@@ -18,7 +19,7 @@
 
             <h1 class="h3 mb-3 font-weight-normal text-center">Connectez-vous</h1>
             <label for="inputEmail">Email</label>
-            <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+            <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
             <label for="inputPassword">Mot de passe</label>
             <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">

@@ -26,16 +26,11 @@ class UpdateAccountType extends AbstractType
         $builder
             ->add('nom',null, ['attr'=>['class'=>'form-control']])
             ->add('prenom',null, ['attr'=>['class'=>'form-control']])
+            ->add('pseudo',null, ['attr'=>['class'=>'form-control']])
             ->add('email',null, ['attr'=>['class'=>'form-control']])
             ->add('telephone',null, ['attr'=>['class'=>'form-control']])
             ->add('avatar',FileType::class,['attr'=>['class'=>'form-control']])
-            ->add('estRattacheA',ChoiceType::class,['attr'=>['class'=>'form-select'],
-                'choices'=>[$niort,
-                    $nantes,
-                    $quimper,
-                    $rennes],
-                'choice_value'=> 'nom',
-                'choice_label'=>function(?Campus $campus){return $campus->getNom();}])
+
         ;
     }
 

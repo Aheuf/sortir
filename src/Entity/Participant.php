@@ -84,6 +84,11 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $avatar;
 
+    /**
+     * @ORM\Column(type="string", length=50, unique=true)
+     */
+    private $Pseudo;
+
     public function __construct()
     {
         $this->estInscrit = new ArrayCollection();
@@ -313,6 +318,18 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(?string $avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->Pseudo;
+    }
+
+    public function setPseudo(string $Pseudo): self
+    {
+        $this->Pseudo = $Pseudo;
 
         return $this;
     }
