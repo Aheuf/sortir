@@ -18,10 +18,10 @@ class rechercheType extends AbstractType
         $builder
             ->add('campus', ChoiceType::class, [
                 'choices' => [
-                    'NANTES' => 'Nantes',
-                    'NIORT' => 'Niort',
-                    'RENNES' => 'Rennes',
-                    'QUIMPER' => 'Quimper',
+                    'Nantes' => 'NANTES',
+                    'Niort' => 'NIORT',
+                    'Rennes' => 'RENNES',
+                    'Quimper' => 'QUIMPER',
                 ],
                 'label' => 'Campus :',
                 'attr' => [

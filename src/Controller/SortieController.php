@@ -17,15 +17,21 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie", name="sortie")
      */
-    public function index(Request $request): Response
+    public function index(Request $request, SortieRepository $sortieRepository): Response
     {
+        $sorties = $sortieRepository->findAll();
         $rechercheForm = $this->createForm(rechercheType::class);
 
-        $rechercheForm->handleRequest($request);
+        if($rechercheForm->handleRequest($request)->isSubmitted()) {
+            $sortiesData = $rechercheForm->getData();
+            $sorties = $sortieRepository->findByResearch($sortiesData);
+            dd($sorties);
+        }
 
 
         return $this->render('sortie/index.html.twig', [
-            'rechercheForm' => $rechercheForm->createView()
+            'rechercheForm' => $rechercheForm->createView(),
+            'sorties' => $sorties,
         ]);
     }
 

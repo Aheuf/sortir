@@ -22,19 +22,22 @@ class SortieRepository extends ServiceEntityRepository
     // /**
     //  * @return Sortie[] Returns an array of Sortie objects
     //  */
-    /*
-    public function findByExampleField($value)
+
+    public function findByResearch($sortiesData)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
+            ->leftJoin('s.campus', 'campus')
+            ->Where('campus.nom = :campusName')
+            ->setParameter('campusName', $sortiesData['campus'])
+            ->andWhere('s.dateHeureDebut = :debut')
+            ->setParameter('debut', $sortiesData['debut'])
+            ->andWhere('s.dateLimiteInscription = :fin')
+            ->setParameter('fin', $sortiesData['fin'])
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?Sortie
