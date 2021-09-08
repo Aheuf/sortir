@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Créer une sortie | {{ parent() }}
+    {{ parent() }} | Créer uen sortie
 {% endblock %}
 
 {% block body %}
     <h2>Créer une sortie</h2>
-    {{ form_start(sortieForm, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_start(sortieForm) }}
 
     {{ form_widget(sortieForm) }}
-        <button>Enregistrer</button>
+        <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
     {{ form_end(sortieForm) }}
 {% endblock %}

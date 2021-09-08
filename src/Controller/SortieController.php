@@ -46,19 +46,16 @@ class SortieController extends AbstractController
         //notre formulaire, associée à l'entité vide
         $sortieForm = $this->createForm(CreateSortieType::class, $sortie);
 
-        //récupère les données du form et les injecte dans notre $wish
+        //récupère les données du form et les injecte dans notre $sortie
         $sortieForm->handleRequest($request);
 
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
-            //hydrate les propriétés absentes du formulaires
-            $sortie->setNom(true);
-            $sortie->setDateHeureDebut(new \DateTime());
-            $sortie->setDateLimiteInscription(new \DateTime());
-            $sortie->setNbInscriptionMax(true);
-            $sortie->setDuree(true);
-            $sortie->setInfoSortie(true);
-            //d'autre à rajouter???
+
+            $sortie->setEtat($sortieForm->get('save')->isClicked()
+                ? 'En création'
+                : 'En cours'
+            );
 
             //sauvegarde en bdd
             $entityManager->persist($sortie);
@@ -74,22 +71,6 @@ class SortieController extends AbstractController
         //affiche le formulaire
         return $this->render('sortie/create.html.twig', [
             "sortieForm" => $sortieForm->createView()
-        ]);
-    }
-
-    /**
-     * @Route("/sortie/liste_sortie", name="sortie_list")
-     */
-    public function list(SortieRepository $sortieRepository): Response
-    {
-        //récupère les sorties publiés, de la plus récente à la plus ancienne
-        //on appelle une méthode personnalisée ici pour éviter d'avoir trop de requêtes.
-        //Voir le SortieRepository.php
-        /////////$sorties = $sortieRepository->findPublishedWishesWithCategories();
-
-        return $this->render('sortie/list.html.twig', [
-            //les passe à Twig
-            //////////////"sorties" => $sorties
         ]);
     }
 
@@ -112,18 +93,6 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/annuler_sortie/{id}", name="sortie_annuler")
-     */
-    public function delete(int $id, SortieRepository $sortieRepository): Response
-    {
-        //todo
-
-        return $this->render('sortie/delete.html.twig', [
-            /////////////"sortie" => $sortie
-        ]);
-    }
-
-    /**
      * @Route("/sortie/modifier_sortie/{id}", name="sortie_modifier")
      */
     public function modify(int $id, SortieRepository $sortieRepository): Response
@@ -134,4 +103,17 @@ class SortieController extends AbstractController
             /////////"sortie" => $sortie
         ]);
     }
+
+    /**
+     * @Route("/sortie/annuler_sortie/{id}", name="sortie_annuler")
+     */
+    public function delete(int $id, SortieRepository $sortieRepository): Response
+    {
+        //todo
+
+        return $this->render('sortie/cancel.html.twig', [
+            /////////////"sortie" => $sortie
+        ]);
+    }
+
 }
