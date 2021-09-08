@@ -53,20 +53,20 @@ class SortieController extends AbstractController
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
 
-            /*
-            $sortie->setEtat($sortieForm->get('save')->isClicked()
-                ? 1
-                : 2
-            );
-            */
+            if ($sortieForm->getClickedButton() && 'save' === $sortieForm->getClickedButton()->getName()) {
+                /*
+                $sortie->setEtat($sortieForm->get('save')->isClicked()
+                    ? 1
+                    : 2
+                );
+                */
 
-            //On récupère l'info de l'état pour le passer dans celui de la sortie créé
-            $tableauEtat = $this->getDoctrine()
-                ->getRepository(Etat::class)
-                ->find(1);
-
-            $sortie -> setEtat($tableauEtat);
-
+                //On récupère l'info de l'état pour le passer dans celui de la sortie créé
+                $tableauEtat = $this->getDoctrine()
+                    ->getRepository(Etat::class)
+                    ->find(1);
+                $sortie->setEtat($tableauEtat);
+            }
 
             //sauvegarde en bdd
             $entityManager->persist($sortie);
