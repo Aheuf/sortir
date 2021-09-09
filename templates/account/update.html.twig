@@ -11,16 +11,18 @@
             {{ form_row(UpdateAccountForm.pseudo, {value:app.user.pseudo}) }}
             {{ form_row(UpdateAccountForm.email, {value:app.user.email}) }}
             {{ form_row(UpdateAccountForm.telephone, {value:app.user.telephone}) }}
-            {{ form_row(UpdateAccountForm.avatar, {value:app.user.avatar}) }}
+            {{ form_row(UpdateAccountForm.avatar, {required:false}) }}
+
+
 
             <label for="campus">Campus</label>
             <select name="campus" id="campus" class="form-select">
                 {% for campus in allCampus %}
-                    <option value="{{ campus.id }}">{{ campus.nom }}</option>
+                    <option value="{{ campus.id }}" {% if campus == app.user.estRattacheA %} selected {% endif %}>{{ campus.nom }}</option>
                 {% endfor %}
             </select>
 
-            <button class="btn btn-outline-secondary my-3" name="jesuisname" id="jesuisid">Modifier</button>
+            <button class="btn btn-outline-secondary my-3">Modifier</button>
         {{ form_end(UpdateAccountForm) }}
     </div>
 
