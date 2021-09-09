@@ -10,61 +10,6 @@
     <h4>Filtrer les sorties</h4>
 
 
-    {# <form class="row" method="#">
-        <div class="col-4 pe-5">
-            <div class="row justify-content-between mt-3 mb-3">
-                <label for="campus" class="col-4">Campus : </label>
-                <select name="campus" class="col-6">
-                    <option value="NIORT">Niort</option>
-                    <option value="NANTES">Nantes</option>
-                    <option value="QUIMPER">Quimper</option>
-                    <option value="RENNES">Rennes</option>
-                </select>
-            </div>
-            <div class="row justify-content-between mb-3">
-                <label for="nom" class="col-5">Le nom contient : </label>
-                <input type="text" name="nom" class="col-6">
-            </div>
-            <div class="row justify-content-between mb-3">
-                <label for="dateDebut" class="col">Entre : </label>
-                <input type="date" class="col">
-                <label for="dateFin" class="col text-center"> et : </label>
-                <input type="date" class="col">
-            </div>
-        </div>
-
-        <div class="column col-4 align-self-center form-check ps-5">
-            <div class="mb-1">
-                <input type="checkbox" value="{{ app.user.id }}" name="organisateur" class="form-check-input"> <label
-                        for="organisateur" class="form-check-label">Sorties
-                    dont
-                    je suis l'organisateur/trice</label>
-            </div>
-            <div class="mb-1">
-                <input type="checkbox" value="true" name="inscrit" class="form-check-input"> <label for="inscrit"
-                                                                                                    class="form-check-label">Sorties
-                    auxquelles je suis
-                    inscrit/e</label>
-            </div>
-            <div class="mb-1">
-                <input type="checkbox" value="true" name="noninscrit" class="form-check-input"> <label for="noninscrit"
-                                                                                                       class="form-check-label">Sorties
-                    auxquelles je ne
-                    suis
-                    pas inscrit/e</label>
-            </div>
-            <div class="mb-1">
-                <input type="checkbox" value="true" name="passees" class="form-check-input"> <label for="passe"
-                                                                                                    class="form-check-label">Sorties
-                    passées</label>
-            </div>
-        </div>
-        <div class="col-4 align-self-center row justify-content-around">
-            <button type="submit" class="col-5 btn btn-dark btn-lg">Rechercher</button>
-        </div>
-    </form> #}
-
-
     {# Debut du formulaire #}
 
 
@@ -152,10 +97,23 @@
                 <th scope="col">{{ sortie.getDateHeureDebut()|date('d-m-Y') }}</th>
                 <th scope="col">{{ sortie.getDateLimiteInscription()|date('d-m-Y') }}</th>
                 <th scope="col">{{ sortie.getParticipants()|length ~'/'~ sortie.getNbInscriptionMax() }}</th>
-                <th scope="col">{{ sortie.getEtat() }}</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
+                <th scope="col">{{ sortie.getEtat().getLibelle() }}</th>
+                <th scope="col">{% for inscrit in sortie.getParticipant().getEstInscrit() %}
+                        {% if inscrit == app.user.id %}
+                        <p>X</p>
+                        {% endif %}
+                {% endfor %}</th>
+                <th scope="col">{{ sortie.getParticipant().getPrenom() }}</th>
+                <th scope="col"><a href="{{ path('sortie_detail', {'id':sortie.id}) }}">Afficher</a>
+                    {% if sortie.getParticipants()|length < sortie.getNbInscriptionMax() %}
+                        <a href="#">S'inscrire</a>
+                    {% endif %}
+                    {% for inscrit in sortie.getParticipant().getEstInscrit() %}
+                        {% if inscrit == app.user.id %}
+                            <a href="#">Se desister</a>
+                        {% endif %}
+                    {% endfor %}
+                </th>
             </tr>
             {% endfor %}
 

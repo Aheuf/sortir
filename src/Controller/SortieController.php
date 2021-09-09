@@ -26,6 +26,7 @@ class SortieController extends AbstractController
 
         if($rechercheForm->handleRequest($request)->isSubmitted()) {
             $sortiesData = $rechercheForm->getData();
+            //dd($sortiesData);
             $sorties = $sortieRepository->findByResearch($sortiesData, $security);
         }
 

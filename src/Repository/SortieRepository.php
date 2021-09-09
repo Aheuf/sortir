@@ -6,6 +6,7 @@ use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Sortie|null find($id, $lockMode = null, $lockVersion = null)
@@ -53,7 +54,14 @@ class SortieRepository extends ServiceEntityRepository
             $queryBuilder->setParameter('moi', $security->getUser()->getId());
         }
 
-        
+        //filtre recherche par textfield
+        $queryBuilder->andWhere(
+            $queryBuilder->expr()->andX(
+            $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->like('s.nom', ':nom')
+            )
+        ));
+        $queryBuilder->setParameter('nom', '%' . $sortiesData['nom'] . '%');
 
         $query = $queryBuilder->getQuery();
         $results = $query->getResult();
