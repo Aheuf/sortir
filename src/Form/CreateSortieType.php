@@ -22,18 +22,21 @@ class CreateSortieType extends AbstractType
             ->add('dateLimiteInscription')
             ->add('nbInscriptionMax')
             ->add('infoSortie')
-            //->add('participants')
-            //->add('participant')
+
+            //->add('campus')
             //->add('campus', ChoiceType::class, [
             //    'choices' => [
             //        'NIORT' => 'NIORT',
             //        'QUIMPER' => 'QUIMPER',
             //        'RENNES' => 'RENNES'
             //        'NANTES' => 'NANTES')
-            //->add('etat')
 
+            ->add('lieuSortie')
             //->add('lieuSortie', TextType::class)
 
+            //->add('etat')
+            //->add('participants')
+            //->add('participant')
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie'])
         ;

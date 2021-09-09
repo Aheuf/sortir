@@ -41,7 +41,9 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/creer_sortie/{id}", name="sortie_create")
      */
-    public function create($id, Request $request, EntityManagerInterface $entityManager): Response
+    public function create($id,
+                           Request $request,
+                           EntityManagerInterface $entityManager): Response
     {
         //notre entité vide
         $sortie = new Sortie();
@@ -54,6 +56,10 @@ class SortieController extends AbstractController
 
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
+
+
+            //$campus = $campusRepository->findBy([], ['nom' => 'DESC']);
+
 
             //On récupère l'info de l'id de l'organisateur
             $ligneOrganisateur = $this->getDoctrine()
