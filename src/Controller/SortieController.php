@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
+use App\Repository\CampusRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,6 +44,7 @@ class SortieController extends AbstractController
      */
     public function create($id,
                            Request $request,
+                           CampusRepository $campusRepository,
                            EntityManagerInterface $entityManager): Response
     {
         //notre entité vide
@@ -54,12 +56,17 @@ class SortieController extends AbstractController
         //récupère les données du form et les injecte dans notre $sortie
         $sortieForm->handleRequest($request);
 
+        //récupère les données des campus
+        //$allCampus = $campusRepository->findAll();
+
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
 
+            //dd($sortieForm->getData());
 
-            //$campus = $campusRepository->findBy([], ['nom' => 'DESC']);
-
+            //j'assigne le campus de l'organisateur
+            $campus = $campusRepository->findOneBy(['nom'=>$request->get('campus')]);
+            $sortie->setCampus($campus);
 
             //On récupère l'info de l'id de l'organisateur
             $ligneOrganisateur = $this->getDoctrine()
