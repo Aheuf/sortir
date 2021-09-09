@@ -1,15 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | Créer uen sortie
+    {{ parent() }} | Créer une sortie
 {% endblock %}
 
 {% block body %}
-    <h2>Créer une sortie</h2>
-    {{ form_start(sortieForm) }}
+    <div>
+        <h2>Créer une sortie</h2>
+        {{ form_start(sortieForm) }}
 
-    {{ form_widget(sortieForm) }}
-        {# <button>Enregistrer</button> #}
-        <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
-    {{ form_end(sortieForm) }}
+        {{ form_widget(sortieForm) }}
+            {# <button>Enregistrer</button> #}
+            <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
+        {{ form_end(sortieForm) }}
+    </div>
 {% endblock %}

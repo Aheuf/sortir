@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Etat;
+use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\rechercheType;
@@ -36,9 +38,9 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/creer_sortie", name="sortie_create")
+     * @Route("/sortie/creer_sortie/{id}", name="sortie_create")
      */
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create($id, Request $request, EntityManagerInterface $entityManager): Response
     {
         //notre entité vide
         $sortie = new Sortie();
@@ -52,27 +54,45 @@ class SortieController extends AbstractController
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
 
-            if ($sortieForm->getClickedButton() && 'save' === $sortieForm->getClickedButton()->getName()) {
-                /*
-                $sortie->setEtat($sortieForm->get('save')->isClicked()
-                    ? 1
-                    : 2
-                );
-                */
+            //On récupère l'info de l'id de l'organisateur
+            $ligneOrganisateur = $this->getDoctrine()
+                ->getRepository(Participant::class)
+                ->find($id);
 
-                //On récupère l'info de l'état pour le passer dans celui de la sortie créé
-                $tableauEtat = $this->getDoctrine()
+            //dd($ligneOrganisateur);
+
+            $sortie->setParticipant($ligneOrganisateur);
+
+            if ($sortieForm->getClickedButton() && 'save' === $sortieForm->getClickedButton()->getName()) {
+
+                //On récupère l'info du clik pour passer l'état dans celui de la sortie créé
+                $ligneEtat = $this->getDoctrine()
                     ->getRepository(Etat::class)
                     ->find(1);
-                $sortie->setEtat($tableauEtat);
+
+                $sortie->setEtat($ligneEtat);
+
+                //sauvegarde en bdd
+                $entityManager->persist($sortie);
+                $entityManager->flush();
+
+                //affiche un message sur la prochaine page
+                $this->addFlash('success', 'La sortie a été enregisté avec succès!');
+
+            } else {
+                //On récupère l'info du clik pour passer l'état dans celui de la sortie créé
+                $ligneEtat = $this->getDoctrine()
+                    ->getRepository(Etat::class)
+                    ->find(2);
+                $sortie->setEtat($ligneEtat);
+
+                //sauvegarde en bdd
+                $entityManager->persist($sortie);
+                $entityManager->flush();
+
+                //affiche un message sur la prochaine page
+                $this->addFlash('success', 'La sortie a été publié avec succès!');
             }
-
-            //sauvegarde en bdd
-            $entityManager->persist($sortie);
-            $entityManager->flush();
-
-            //affiche un message sur la prochaine page
-            $this->addFlash('success', 'La sortie a été ajoutée avec succès!');
 
             //redirige vers la page de détails de la sortie fraîchement créée
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
@@ -89,8 +109,10 @@ class SortieController extends AbstractController
      */
     public function detail(int $id, SortieRepository $sortieRepository): Response
     {
-        //récupère cete sortie en fonction de l'id présent dans l'URL
+        //récupère cette sortie en fonction de l'id présent dans l'URL
         $sortie = $sortieRepository->find($id);
+
+        //dd($sortie);
 
         //s'il n'existe pas en bdd, on déclenche une erreur 404
         if (!$sortie){
@@ -98,7 +120,7 @@ class SortieController extends AbstractController
         }
 
         return $this->render('sortie/detail.html.twig', [
-            "sortie" => $sortie
+            "sortie" => $sortie // ->createView()
         ]);
     }
 
