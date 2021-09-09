@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Campus;
 use App\Entity\Participant;
 use App\Form\UpdateAccountType;
 use App\Repository\CampusRepository;
@@ -33,30 +32,43 @@ class AccountController extends AbstractController
         $user = new Participant();
         $form =$this->createForm(UpdateAccountType::class,$user);
         $user = $repository->find($id);
-        $form->handleRequest($request);
+
         $allCampus = $campusRepository->findAll();
 
-        if ($form->isSubmitted()){
+        if ($form->isSubmitted() && $form-> isValid()) {
+
                                                 //gestion rattachement campus
             $campus = $campusRepository->findOneBy(['id'=>$request->get('campus')]);
             $user->setEstRattacheA($campus);
 
             $user->setNom($form['nom']->getData());
             $user->setPrenom($form['prenom']->getData());
-            $user->setPseudo($form['pseudo']->getData());
-            $user->setEmail($form['email']->getData());
+
+            if ($form['pseudo']->getData() != $user->getPseudo()){
+                $user->setPseudo($form['pseudo']->getData());
+            }
+
+            if ($form['email']->getData() != $user->getEmail()){
+                $user->setEmail($form['email']->getData());
+            }
+
             $user->setTelephone($form['telephone']->getData());
 
                                                         //gestion de l'image
-            $nbRand = random_int(1000000000,2000000000);
-            $avatar = $form['avatar']->getData();
-            $nomSplit = explode('.',$avatar->getClientOriginalName());
-            $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
-            $nom = implode('.',$nomSplit);
+            if ($form['avatar']->getData()){
+                $nbRand = random_int(1000000000,2000000000);
+                $avatar = $form['avatar']->getData();
+                $nomSplit = explode('.',$avatar->getClientOriginalName());
+                $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
+                $nom = implode('.',$nomSplit);
 
-            $folder = './img';
-            $avatar->move($folder, $nom);
-            $user->setAvatar($nom);
+                $folder = './img';
+                $avatar->move($folder, $nom);
+                $user->setAvatar($nom);
+            } else {
+                $avatar = $user->getAvatar();
+                $user->setAvatar($avatar);
+            }
 
             $entityManager->flush();
             $this->addFlash('sucess','votre compte à été modifié');

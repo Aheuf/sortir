@@ -3,9 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Sortie;
+use Doctrine\DBAL\Types\StringType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,10 +24,15 @@ class CreateSortieType extends AbstractType
             ->add('infoSortie')
             //->add('participants')
             //->add('participant')
-            //->add('campus')
+            //->add('campus', ChoiceType::class, [
+            //    'choices' => [
+            //        'NIORT' => 'NIORT',
+            //        'QUIMPER' => 'QUIMPER',
+            //        'RENNES' => 'RENNES'
+            //        'NANTES' => 'NANTES')
             //->add('etat')
 
-            //->add('lieuSortie')
+            //->add('lieuSortie', TextType::class)
 
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie'])
