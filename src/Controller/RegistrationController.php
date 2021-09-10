@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Campus;
 use App\Entity\Participant;
 use App\Form\RegistrationFormType;
 use App\Repository\CampusRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -24,6 +24,10 @@ class RegistrationController extends AbstractController
 
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+
+        if ($this->getUser()) {
+            throw new AccessDeniedHttpException();
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setAdministrateur(0);

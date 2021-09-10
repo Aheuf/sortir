@@ -9,6 +9,7 @@ use App\Repository\ParticipantRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -21,6 +22,11 @@ class AccountController extends AbstractController
      */
     public function show($id, ParticipantRepository $repository, CampusRepository $campusRepository){
         $user = $repository->find($id);
+
+        if (!$user){
+            throw $this->createNotFoundException();
+        }
+
         $campus = $campusRepository->find($user->getEstRattacheA());
         return $this->render('account/show.html.twig',['user'=>$user, 'campus'=>$campus]);
     }
@@ -38,6 +44,10 @@ class AccountController extends AbstractController
         $user = $repository->find($id);
 
         $allCampus = $campusRepository->findAll();
+
+        if ($this->getUser() != $user) {
+            throw new AccessDeniedHttpException();
+        }
 
         if ($form->isSubmitted() && $form-> isValid() || $form['email']->getData()==$user->getEmail()) {
 

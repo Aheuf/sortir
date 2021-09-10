@@ -5,7 +5,7 @@
 {% block body %}
     <link rel="stylesheet" href="{{ asset('css/logs.css') }}">
 
-    <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded position-absolute top-50 start-50 translate-middle">
+    <div class="container mt-5 col-sm-8 col-md-5 {% if not app.user %}bg-light{% endif %} rounded position-absolute top-50 start-50 translate-middle">
         <form method="post">
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -13,11 +13,10 @@
 
             {% if app.user %}
                 <div class="mb-3">
-                    <p>Vous êtes connecté en tant que : </p>
-                    <p>{{ app.user.prenom }} {{ app.user.nom }}</p>
+                    <h1 class="text-center">Bienvenu {{ app.user.pseudo }}</h1>
                 </div>
-            {% endif %}
 
+            {% else %}
             <h1 class="h3 mb-3 font-weight-normal text-center">Connectez-vous</h1>
             <label for="inputEmail">Email</label>
             <input type="text" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
@@ -40,6 +39,7 @@
             <button class="btn btn-outline-secondary my-4" type="submit">
                 Se connecter
             </button>
+            {% endif %}
         </form>
     </div>
 {% endblock %}

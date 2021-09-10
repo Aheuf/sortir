@@ -5,16 +5,20 @@
 {% block body %}
 
     <div class="container">
-        <img class="img-fluid img-thumbnail rounded-circle col-sm-3 float-end"  src="{{ asset('img/'~user.avatar) }}" alt="avatar">
+
+            <img class="img-fluid img-thumbnail rounded-circle col-sm-6 col-md-3 float-end" src="{{ asset('img/'~user.avatar) }}"
+                 alt="avatar" style="height: 300px; width: 300px">
+
         {% if user.id == app.user.id %}
             <h1 class="text-center mt-5">Mon compte</h1>
             <hr>
         {% else %}
-            <h1>{{ user.pseudo }}</h1>
+            <h1 class="text-center mt-5">{{ user.pseudo }}</h1>
+            <hr>
         {% endif %}
 
         <div>
-            <h2>{{ user.nom }} {{ user.prenom }}</h2>
+            <h2 class="text-decoration-underline">{{ user.nom }} {{ user.prenom }}</h2>
             <p>alias : {{ user.pseudo }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.telephone }}</p>

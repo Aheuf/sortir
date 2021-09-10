@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | 403{% endblock %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="{{ asset('css/error.css') }}">
+
+        <div class="container bg-light rounded-3 d-block mx-auto mt-5 py-5 col-sm-10 col-md-8">
+            <div class="text-center">
+                <img class="mx-auto col-3" src="{{ asset('img/redkey.png') }}" alt="loupe">
+            </div>
+            <h1 class="text-center"> erreur 403</h1>
+            <p class="text-center">Petit malin ! t'as pas accès à ça retourne à l'accueil petit écureuil</p>
+        </div>
+
+{% endblock %}
