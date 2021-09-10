@@ -5,9 +5,13 @@
 {% block body %}
 
     <div class="container">
-
+        {% if app.user.avatar %}
             <img class="img-fluid img-thumbnail rounded-circle col-sm-6 col-md-3 float-end" src="{{ asset('img/'~user.avatar) }}"
                  alt="avatar" style="height: 300px; width: 300px">
+        {% else %}
+            <img class="img-fluid img-thumbnail rounded-circle col-sm-6 col-md-3 float-end" src="{{ asset('img/defaultAvatar.png') }}"
+                alt="avatar" style="height: 300px; width: 300px">
+        {% endif %}
 
         {% if user.id == app.user.id %}
             <h1 class="text-center mt-5">Mon compte</h1>

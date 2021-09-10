@@ -37,15 +37,17 @@ class RegistrationController extends AbstractController
             $campus = $repository->findOneBy(['id'=>$request->get('campus')]);
             $user->setEstRattacheA($campus);
                                                 //gestion de l'image
-            $nbRand = random_int(1000000000,2000000000);
-            $avatar = $form['avatar']->getData();
-            $nomSplit = explode('.',$avatar->getClientOriginalName());
-            $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
-            $nom = implode('.',$nomSplit);
+            if ($form['avatar']->getData()){
+                $nbRand = random_int(1000000000,2000000000);
+                $avatar = $form['avatar']->getData();
+                $nomSplit = explode('.',$avatar->getClientOriginalName());
+                $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
+                $nom = implode('.',$nomSplit);
 
-            $folder = './img';
-            $avatar->move($folder, $nom);
-            $user->setAvatar($nom);
+                $folder = './img';
+                $avatar->move($folder, $nom);
+                $user->setAvatar($nom);
+            }
                                                 // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
