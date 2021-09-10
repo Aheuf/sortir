@@ -9,11 +9,7 @@
             {{ form_row(UpdateAccountForm.nom, {value:app.user.nom}) }}
             {{ form_row(UpdateAccountForm.prenom, {value:app.user.prenom}) }}
             {{ form_row(UpdateAccountForm.pseudo, {value:app.user.pseudo}) }}
-            {{ form_row(UpdateAccountForm.email, {value:app.user.email}) }}
-            {{ form_row(UpdateAccountForm.telephone, {value:app.user.telephone}) }}
             {{ form_row(UpdateAccountForm.avatar, {required:false}) }}
-
-
 
             <label for="campus">Campus</label>
             <select name="campus" id="campus" class="form-select">
@@ -22,7 +18,9 @@
                 {% endfor %}
             </select>
 
-            <button class="btn btn-outline-secondary my-3">Modifier</button>
+            {{ form_row(UpdateAccountForm.telephone, {value:app.user.telephone}) }}
+            {{ form_row(UpdateAccountForm.email, {value:app.user.email}) }}
+            <button class="btn btn-outline-success my-3">Modifier</button>
         {{ form_end(UpdateAccountForm) }}
     </div>
 
