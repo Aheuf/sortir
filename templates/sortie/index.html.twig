@@ -98,6 +98,7 @@
                 <th scope="col">{{ sortie.getDateLimiteInscription()|date('d-m-Y') }}</th>
                 <th scope="col">{{ sortie.getParticipants()|length ~'/'~ sortie.getNbInscriptionMax() }}</th>
                 <th scope="col">{{ sortie.getEtat().getLibelle() }}</th>
+
                 <th scope="col">{% for inscrit in sortie.getParticipant().getEstInscrit() %}
                         {% if inscrit == app.user.id %}
                         <i class="bi bi-check-lg" style="color: white"></i>

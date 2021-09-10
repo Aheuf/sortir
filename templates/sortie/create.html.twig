@@ -9,8 +9,16 @@
         <h2>Créer une sortie</h2>
         {{ form_start(sortieForm) }}
 
-        {{ form_widget(sortieForm) }}
-            {# <button>Enregistrer</button> #}
+        {{ form_row(sortieForm.nom) }}
+        {{ form_row(sortieForm.dateHeureDebut) }}
+        {{ form_row(sortieForm.duree) }}
+        {{ form_row(sortieForm.dateLimiteInscription) }}
+        {{ form_row(sortieForm.nbInscriptionMax) }}
+        {{ form_row(sortieForm.infoSortie) }}
+        {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
+        {{ form_row(sortieForm.lieuSortie) }}
+
+        {# <button>Enregistrer</button> #}
             <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
         {{ form_end(sortieForm) }}
     </div>
