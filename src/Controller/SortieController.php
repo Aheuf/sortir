@@ -7,8 +7,8 @@ use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
 use App\Repository\CampusRepository;
-use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
+use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\rechercheType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -78,10 +78,14 @@ class SortieController extends AbstractController
     public function create($id,
                            Request $request,
                            CampusRepository $campusRepository,
+                           VilleRepository $villeRepository,
                            EntityManagerInterface $entityManager): Response
     {
         //notre entité vide
         $sortie = new Sortie();
+
+        //recupere toutes les villes
+        $villes = $villeRepository->findAll();
 
         //notre formulaire, associée à l'entité vide
         $sortieForm = $this->createForm(CreateSortieType::class, $sortie);
@@ -89,26 +93,17 @@ class SortieController extends AbstractController
         //récupère les données du form et les injecte dans notre $sortie
         $sortieForm->handleRequest($request);
 
-        //récupère les données des campus
-        //$allCampus = $campusRepository->findAll();
-
         //si le formulaire est soumis et valide...
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
 
-            //dd($sortieForm->getData());
-
-            //j'assigne le campus de l'organisateur
-            $campus = $campusRepository->findOneBy(['nom'=>$request->get('campus')]);
-            $sortie->setCampus($campus);
-
-            //On récupère l'info de l'id de l'organisateur
+            //On récupère et stock l'info de l'id de l'organisateur
             $ligneOrganisateur = $this->getDoctrine()
                 ->getRepository(Participant::class)
                 ->find($id);
-
-            //dd($ligneOrganisateur);
-
             $sortie->setParticipant($ligneOrganisateur);
+
+            //récuperer et stocker dans la sortie le campus de l'organisateur
+            $sortie->setCampus($ligneOrganisateur->getEstRattacheA());
 
             if ($sortieForm->getClickedButton() && 'save' === $sortieForm->getClickedButton()->getName()) {
 
@@ -116,7 +111,6 @@ class SortieController extends AbstractController
                 $ligneEtat = $this->getDoctrine()
                     ->getRepository(Etat::class)
                     ->find(1);
-
                 $sortie->setEtat($ligneEtat);
 
                 //sauvegarde en bdd
@@ -147,7 +141,8 @@ class SortieController extends AbstractController
 
         //affiche le formulaire
         return $this->render('sortie/create.html.twig', [
-            "sortieForm" => $sortieForm->createView()
+            'sortieForm' => $sortieForm->createView(),
+            'villes' => $villes
         ]);
     }
 
@@ -158,8 +153,6 @@ class SortieController extends AbstractController
     {
         //récupère cette sortie en fonction de l'id présent dans l'URL
         $sortie = $sortieRepository->find($id);
-
-        //dd($sortie);
 
         //s'il n'existe pas en bdd, on déclenche une erreur 404
         if (!$sortie){
