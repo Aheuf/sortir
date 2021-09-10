@@ -38,13 +38,17 @@ class rechercheType extends AbstractType
                 'label' => 'Entre : ',
                 'attr' => [
                     'class' => 'col-6'
-                ]
+                ],
+                'widget' => 'single_text',
+                'required' => false,
             ])
             ->add('fin', DateType::class, [
                 'label' => ' et : ',
                 'attr' => [
                     'class' => 'col-6'
-                ]
+                ],
+                'widget' => 'single_text',
+                'required' => false,
             ])
             ->add('organisateur', CheckboxType::class, [
                 'label' => 'Sorties dont je suis l\'organisateur',

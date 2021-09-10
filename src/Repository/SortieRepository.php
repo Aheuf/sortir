@@ -6,7 +6,7 @@ use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
-use function Doctrine\ORM\QueryBuilder;
+
 
 /**
  * @method Sortie|null find($id, $lockMode = null, $lockVersion = null)
@@ -33,22 +33,22 @@ class SortieRepository extends ServiceEntityRepository
         $queryBuilder->where('campus.nom = :campusNom');
         $queryBuilder->setParameter('campusNom', $sortiesData['campus']->getNom());
 
-        //filtre choix de la premiere date
-        $queryBuilder->andWhere('s.dateHeureDebut = :debut');
-        $queryBuilder->setParameter('debut', $sortiesData['debut']);
-
-        //filtre choix de la deuxieme date
-        $queryBuilder->andWhere('s.dateLimiteInscription = :fin');
-        $queryBuilder->setParameter('fin', $sortiesData['fin']);
+        //filtre pour afficher les sorties entre deux dates
+        if ($sortiesData['debut'] != null && $sortiesData['fin'] != null) {
+            $queryBuilder->andWhere('s.dateHeureDebut >= :debut');
+            $queryBuilder->setParameter('debut', $sortiesData['debut']);
+            $queryBuilder->andWhere('s.dateLimiteInscription <= :fin');
+            $queryBuilder->setParameter('fin', $sortiesData['fin']);
+        }
 
         //filtre checkbox pour les sorties passées
-        if ($sortiesData['passees'] = true ) {
+        if ($sortiesData['passees'] == true ) {
             $queryBuilder->andWhere('s.dateLimiteInscription < :aujourdhui');
             $queryBuilder->setParameter('aujourdhui', date("Y-m-d H:i:s"));
         }
 
         //filtre checkbox pour les sorties que j'organise
-        if ($sortiesData['organisateur'] = true ) {
+        if ($sortiesData['organisateur'] == true ) {
             $queryBuilder->leftJoin('s.participant', 'participant');
             $queryBuilder->andWhere('participant.id = :moi');
             $queryBuilder->setParameter('moi', $security->getUser()->getId());
@@ -56,14 +56,13 @@ class SortieRepository extends ServiceEntityRepository
 
         //filtre recherche par textfield
         $queryBuilder->andWhere(
-            $queryBuilder->expr()->andX(
-            $queryBuilder->expr()->orX(
-                $queryBuilder->expr()->like('s.nom', ':nom')
-            )
-        ));
+            $queryBuilder->expr()->like('s.nom', ':nom')
+        );
         $queryBuilder->setParameter('nom', '%' . $sortiesData['nom'] . '%');
 
+
         $query = $queryBuilder->getQuery();
+        //dd($query);
         $results = $query->getResult();
         return $results;
     }

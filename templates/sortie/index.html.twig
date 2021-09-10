@@ -100,19 +100,38 @@
                 <th scope="col">{{ sortie.getEtat().getLibelle() }}</th>
                 <th scope="col">{% for inscrit in sortie.getParticipant().getEstInscrit() %}
                         {% if inscrit == app.user.id %}
-                        <p>X</p>
+                        <i class="bi bi-check-lg" style="color: white"></i>
                         {% endif %}
                 {% endfor %}</th>
                 <th scope="col">{{ sortie.getParticipant().getPrenom() }}</th>
-                <th scope="col"><a href="{{ path('sortie_detail', {'id':sortie.id}) }}">Afficher</a>
-                    {% if sortie.getParticipants()|length < sortie.getNbInscriptionMax() %}
-                        <a href="#">S'inscrire</a>
+                <th scope="col">
+
+                    {# Afficher le lien de detail de la sortie #}
+                    <a href="{{ path('sortie_detail', {'id':sortie.id}) }}">Afficher</a>
+
+                    {# Afficher le bouton S'inscrire si le nombre de place max n'est pas atteint, que l'état est ouvert et que la date max n'est pas passée #}
+                    {% if sortie.getParticipants()|length < sortie.getNbInscriptionMax()
+                        and sortie.getEtat().getLibelle() == 'Ouvert'
+                        and date() < sortie.getDateLimiteInscription()
+                        and sortie.getParticipant().getEmail() != app.user.email %}
+                        <a href="{{ path('sortie_sInscrire') }}">S'inscrire</a>
                     {% endif %}
+
+                    {# Affiche le bouton Se desister si nous sommes inscrit #}
                     {% for inscrit in sortie.getParticipant().getEstInscrit() %}
-                        {% if inscrit == app.user.id %}
+                        {% if inscrit == app.user.id and sortie.getEtat().getLibelle() == 'Ouvert' %}
                             <a href="#">Se desister</a>
                         {% endif %}
                     {% endfor %}
+
+                    {# Affiche le bouton annuler la sortie si nous sommes l'organisateur #}
+                    {% if sortie.getParticipant().getEmail() == app.user.email and sortie.getEtat().getLibelle() == 'Ouvert' %}
+                        <a href=" {{ path('sortie_annuler', {'id':sortie.id})}} ">Annuler</a>
+                    {% endif %}
+
+                    {% if sortie.getEtat().getLibelle() == 'En création' and sortie.getParticipant().getEmail() == app.user.email %}
+                        <a href="{{ path('sortie_modifier', {'id':sortie.id}) }}">Modifier</a>
+                    {% endif %}
                 </th>
             </tr>
             {% endfor %}
@@ -122,6 +141,6 @@
     </div>
 
     <div class="row justify-content-around pt-5">
-        <a href="/sortie/creer_sortie" class="btn btn-lg btn-dark col-3">Créer une sortie</a>
+        <a href="{{path('sortie_create',{id:app.user.id}) }}" class="btn btn-lg btn-dark col-3">Créer une sortie</a>
     </div>
 {% endblock %}

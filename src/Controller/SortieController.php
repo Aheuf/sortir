@@ -30,12 +30,33 @@ class SortieController extends AbstractController
             $sortiesData = $rechercheForm->getData();
             //dd($sortiesData);
             $sorties = $sortieRepository->findByResearch($sortiesData, $security);
+            //dd($sorties);
         }
 
         return $this->render('sortie/index.html.twig', [
             'rechercheForm' => $rechercheForm->createView(),
             'sorties' => $sorties,
         ]);
+    }
+
+    /**
+     * @Route("/sortie/s_inscrire", name="sortie_sInscrire")
+     */
+    public function sInscrire(): Response
+    {
+        //Appel a la fonction sortie->addParticipant($participant)
+
+        return $this->redirectToRoute('sortie');
+    }
+
+    /**
+     * @Route("/sortie/se_desister", name="sortie_seDesister")
+     */
+    public function seDesister(): Response
+    {
+        //Appel a la fonction sortie->removeParticipant($participant)
+
+        return $this->redirectToRoute('sortie');
     }
 
     /**
