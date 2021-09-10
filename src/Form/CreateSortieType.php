@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Sortie;
 use Doctrine\DBAL\Types\StringType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -18,9 +19,9 @@ class CreateSortieType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('dateHeureDebut')
-            ->add('duree') //, IntegerType::class)
-            ->add('dateLimiteInscription')
+            ->add('dateHeureDebut', DateType::class, ['widget' => 'single_text'])
+            ->add('duree', IntegerType::class)
+            ->add('dateLimiteInscription', DateType::class, ['widget' => 'single_text'])
             ->add('nbInscriptionMax')
             ->add('infoSortie')
 
