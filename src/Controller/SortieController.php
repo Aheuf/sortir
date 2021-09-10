@@ -45,7 +45,13 @@ class SortieController extends AbstractController
      */
     public function sInscrire(): Response
     {
-        //Appel a la fonction sortie->addParticipant($participant)
+        if ($this->getUser() != $user) {
+            $this->addFlash('Warn', 'Vous ne pouvez pas inscrire un autre utilisateur !');
+        } else {
+            //Appel a la fonction sortie->addParticipant($participant)
+
+            $this->addFlash('success', 'Votre inscription a bien été prise en compte !');
+        }
 
         return $this->redirectToRoute('sortie');
     }
@@ -55,7 +61,13 @@ class SortieController extends AbstractController
      */
     public function seDesister(): Response
     {
-        //Appel a la fonction sortie->removeParticipant($participant)
+        if ($this->getUser() != $user) {
+            $this->addFlash('Warn', 'Vous ne pouvez pas désinscrire un autre utilisateur !');
+        } else {
+            //Appel a la fonction sortie->removeParticipant($participant)
+
+            $this->addFlash('success', 'Votre désinscription a bien été prise en compte !');
+        }
 
         return $this->redirectToRoute('sortie');
     }
