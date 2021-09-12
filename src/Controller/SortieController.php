@@ -9,11 +9,13 @@ use App\Form\CreateSortieType;
 use App\Repository\CampusRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\rechercheType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
@@ -29,9 +31,7 @@ class SortieController extends AbstractController
 
         if($rechercheForm->handleRequest($request)->isSubmitted()) {
             $sortiesData = $rechercheForm->getData();
-            //dd($sortiesData);
             $sorties = $sortieRepository->findByResearch($sortiesData, $security);
-            //dd($sorties);
         }
 
         return $this->render('sortie/index.html.twig', [
@@ -41,14 +41,20 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/s_inscrire", name="sortie_sInscrire")
+     * @Route("/sortie/s_inscrire/{sortieId}/{userId}", name="sortie_sInscrire")
      */
-    public function sInscrire(): Response
+    public function sInscrire($sortieId, $userId, Security $security, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
     {
+        $user = $participantRepository->find($userId);
+        $sortie = $sortieRepository->find($sortieId);
+
         if ($this->getUser() != $user) {
-            $this->addFlash('Warn', 'Vous ne pouvez pas inscrire un autre utilisateur !');
+            throw new AccessDeniedHttpException();
         } else {
-            //Appel a la fonction sortie->addParticipant($participant)
+            $sortie->addParticipant($user);
+            $user->addEstInscrit($sortie);
+
+            $entityManager->flush();
 
             $this->addFlash('success', 'Votre inscription a bien été prise en compte !');
         }
@@ -57,14 +63,20 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/se_desister", name="sortie_seDesister")
+     * @Route("/sortie/se_desister/{sortieId}/{userId}", name="sortie_seDesister")
      */
-    public function seDesister(): Response
+    public function seDesister($sortieId, $userId, Security $security, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
     {
+        $user = $participantRepository->find($userId);
+        $sortie = $sortieRepository->find($sortieId);
+
         if ($this->getUser() != $user) {
-            $this->addFlash('Warn', 'Vous ne pouvez pas désinscrire un autre utilisateur !');
+            throw new AccessDeniedHttpException();
         } else {
-            //Appel a la fonction sortie->removeParticipant($participant)
+            $sortie->removeParticipant($user);
+            $user->removeEstInscrit($sortie);
+
+            $entityManager->flush();
 
             $this->addFlash('success', 'Votre désinscription a bien été prise en compte !');
         }

@@ -25,7 +25,9 @@ class rechercheType extends AbstractType
                 'label' => 'Campus :',
                 'attr' => [
                     'class' => 'col-6'
-                ]
+                ],
+                'required' => false,
+                'placeholder' => 'Choisissez un campus',
             ])
             ->add('nom', TextType::class, [
                 'label' => 'Le nom contient : ',

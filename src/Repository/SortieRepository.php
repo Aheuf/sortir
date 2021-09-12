@@ -29,9 +29,11 @@ class SortieRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('s');
 
         //filtre choix du campus
-        $queryBuilder->leftJoin('s.campus', 'campus');
-        $queryBuilder->where('campus.nom = :campusNom');
-        $queryBuilder->setParameter('campusNom', $sortiesData['campus']->getNom());
+        if ($sortiesData['campus'] != null) {
+            $queryBuilder->leftJoin('s.campus', 'campus');
+            $queryBuilder->where('campus.nom = :campusNom');
+            $queryBuilder->setParameter('campusNom', $sortiesData['campus']->getNom());
+        }
 
         //filtre pour afficher les sorties entre deux dates
         if ($sortiesData['debut'] != null && $sortiesData['fin'] != null) {
@@ -55,10 +57,12 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         //filtre recherche par textfield
-        $queryBuilder->andWhere(
-            $queryBuilder->expr()->like('s.nom', ':nom')
-        );
-        $queryBuilder->setParameter('nom', '%' . $sortiesData['nom'] . '%');
+        if ($sortiesData['nom'] != null) {
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->like('s.nom', ':nom')
+            );
+            $queryBuilder->setParameter('nom', '%' . $sortiesData['nom'] . '%');
+        }
 
 
         $query = $queryBuilder->getQuery();

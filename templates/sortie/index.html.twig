@@ -116,12 +116,12 @@
                         and sortie.getEtat().getLibelle() == 'Ouvert'
                         and date() < sortie.getDateLimiteInscription()
                         and sortie.getParticipant().getEmail() != app.user.email %}
-                        <a href="{{ path('sortie_sInscrire') }}">S'inscrire</a>
+                        <a href="{{ path('sortie_sInscrire', {'sortieId': sortie.id, 'userId': app.user.id}) }}">S'inscrire</a>
                     {% endif %}
 
                     {# Affiche le bouton Se desister si nous sommes inscrit #}
                     {% for inscrit in sortie.getParticipant().getEstInscrit() %}
-                        {% if inscrit == app.user.id and sortie.getEtat().getLibelle() == 'Ouvert' %}
+                        {% if inscrit == app.user and sortie.getEtat().getLibelle() == 'Ouvert' %}
                             <a href="#">Se desister</a>
                         {% endif %}
                     {% endfor %}
