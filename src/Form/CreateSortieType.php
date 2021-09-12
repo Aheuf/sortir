@@ -2,12 +2,13 @@
 
 namespace App\Form;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
-use Doctrine\DBAL\Types\StringType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -18,26 +19,21 @@ class CreateSortieType extends AbstractType
     {
         $builder
             ->add('nom')
-            ->add('dateHeureDebut')
-            ->add('duree') //, IntegerType::class)
-            ->add('dateLimiteInscription')
+            ->add('dateHeureDebut', DateType::class, ['widget' => 'single_text'])
+            ->add('duree', IntegerType::class)
+            ->add('dateLimiteInscription', DateType::class, ['widget' => 'single_text'])
             ->add('nbInscriptionMax')
             ->add('infoSortie')
 
             ->add('campus', TextType::class, ['attr'=>['disabled'=>true]])
-            //->add('campus', ChoiceType::class, [
-            //    'choices' => [
-            //        'NIORT' => 'NIORT',
-            //        'QUIMPER' => 'QUIMPER',
-            //        'RENNES' => 'RENNES'
-            //        'NANTES' => 'NANTES')
 
-            ->add('lieuSortie')
-            //->add('lieuSortie', TextType::class)
+            ->add('lieuSortie', EntityType::class, [
+                'label' => 'Lieu',
+                //quelle est la classe à afficher ici ?
+                'class' => Lieu::class,
+                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
+                'choice_label' => 'nom'])
 
-            //->add('etat')
-            //->add('participants')
-            //->add('participant')
             ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie'])
         ;

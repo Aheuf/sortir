@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | 404{% endblock %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="{{ asset('css/error.css') }}">
+
+        <div class="container bg-light rounded-3 d-block mx-auto mt-5 py-5 col-sm-10 col-md-8">
+            <div class="text-center">
+                <img class="mx-auto col-3" src="{{ asset('img/loupe.png') }}" alt="loupe">
+            </div>
+            <h1 class="text-center"> erreur 404</h1>
+            <p class="text-center">même avec cette belle loupe, nous n'arrivont pas à trouver la page demandée</p>
+        </div>
+
+{% endblock %}

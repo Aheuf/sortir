@@ -5,16 +5,24 @@
 {% block body %}
 
     <div class="container">
-        <img class="img-fluid img-thumbnail rounded-circle col-sm-3 float-end"  src="{{ asset('img/'~user.avatar) }}" alt="avatar">
+        {% if app.user.avatar %}
+            <img class="img-fluid img-thumbnail rounded-circle col-sm-6 col-md-3 float-end" src="{{ asset('img/'~user.avatar) }}"
+                 alt="avatar" style="height: 300px; width: 300px">
+        {% else %}
+            <img class="img-fluid img-thumbnail rounded-circle col-sm-6 col-md-3 float-end" src="{{ asset('img/defaultAvatar.png') }}"
+                alt="avatar" style="height: 300px; width: 300px">
+        {% endif %}
+
         {% if user.id == app.user.id %}
             <h1 class="text-center mt-5">Mon compte</h1>
             <hr>
         {% else %}
-            <h1>{{ user.pseudo }}</h1>
+            <h1 class="text-center mt-5">{{ user.pseudo }}</h1>
+            <hr>
         {% endif %}
 
         <div>
-            <h2>{{ user.nom }} {{ user.prenom }}</h2>
+            <h2 class="text-decoration-underline">{{ user.nom }} {{ user.prenom }}</h2>
             <p>alias : {{ user.pseudo }}</p>
             <p>{{ user.email }}</p>
             <p>{{ user.telephone }}</p>
@@ -24,6 +32,10 @@
 
         {% if user.id == app.user.id %}
             <a href="{{path('app_account_update',{id:app.user.id}) }}" class="btn btn-outline-secondary">Modifier mon compte</a>
+            <br>
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('admin_app_admin_users') }}">consulter la liste des comptes</a>
         {% endif %}
     </div>
 

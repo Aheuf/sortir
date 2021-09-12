@@ -7,18 +7,29 @@
 {% block body %}
     <div>
         <h2>Créer une sortie</h2>
+    </div>
+    <div>
         {{ form_start(sortieForm) }}
 
         {{ form_row(sortieForm.nom) }}
         {{ form_row(sortieForm.dateHeureDebut) }}
-        {{ form_row(sortieForm.duree) }}
+        {{ form_row(sortieForm.duree) }}minutes
         {{ form_row(sortieForm.dateLimiteInscription) }}
         {{ form_row(sortieForm.nbInscriptionMax) }}
         {{ form_row(sortieForm.infoSortie) }}
+    </div>
+    <div>
         {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
+
+        <label for="ville">Ville</label>
+        <select name="ville" id="ville">
+            {% for ville in villes %}
+                <option value="{{ ville.id }}">{{ ville.nom }}</option>
+            {% endfor %}
+        </select>
+
         {{ form_row(sortieForm.lieuSortie) }}
 
-        {# <button>Enregistrer</button> #}
             <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
         {{ form_end(sortieForm) }}
     </div>

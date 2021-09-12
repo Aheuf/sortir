@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | 500{% endblock %}
+
+{% block body %}
+
+    <link rel="stylesheet" href="{{ asset('css/error.css') }}">
+
+        <div class="container bg-light rounded-3 d-block mx-auto mt-5 py-5 col-sm-10 col-md-8">
+            <div class="text-center">
+                <img class="mx-auto col-3" src="{{ asset('img/fatalError.png') }}" alt="loupe">
+            </div>
+            <h1 class="text-center"> erreur 500</h1>
+            <h2 class="text-center"> Game Over</h2>
+            <p class="text-center">Utilisateur : 1 | Site : 0</p>
+        </div>
+
+{% endblock %}

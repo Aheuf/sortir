@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Campus;
 use App\Entity\Participant;
 use App\Form\RegistrationFormType;
 use App\Repository\CampusRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -25,6 +25,10 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
+        if ($this->getUser()) {
+            throw new AccessDeniedHttpException();
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setAdministrateur(0);
             $user->setActif(1);
@@ -33,15 +37,17 @@ class RegistrationController extends AbstractController
             $campus = $repository->findOneBy(['id'=>$request->get('campus')]);
             $user->setEstRattacheA($campus);
                                                 //gestion de l'image
-            $nbRand = random_int(1000000000,2000000000);
-            $avatar = $form['avatar']->getData();
-            $nomSplit = explode('.',$avatar->getClientOriginalName());
-            $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
-            $nom = implode('.',$nomSplit);
+            if ($form['avatar']->getData()){
+                $nbRand = random_int(1000000000,2000000000);
+                $avatar = $form['avatar']->getData();
+                $nomSplit = explode('.',$avatar->getClientOriginalName());
+                $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
+                $nom = implode('.',$nomSplit);
 
-            $folder = './img';
-            $avatar->move($folder, $nom);
-            $user->setAvatar($nom);
+                $folder = './img';
+                $avatar->move($folder, $nom);
+                $user->setAvatar($nom);
+            }
                                                 // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
@@ -55,7 +61,7 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
             // do anything else you need here, like send an email
 
-            $this->addFlash('sucess','votre compte à été créé');
+            $this->addFlash('success','votre compte à été créé');
             return $this->redirectToRoute('app_login');
         }
 
