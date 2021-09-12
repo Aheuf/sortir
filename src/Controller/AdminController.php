@@ -7,6 +7,7 @@ use App\Entity\Ville;
 use App\Form\CampusType;
 use App\Form\VilleType;
 use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\VilleRepository;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -177,4 +178,40 @@ class AdminController extends AbstractController
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
 
+    /**
+     * @Route ("/users","users")
+     */
+    public function Users(ParticipantRepository $repository){
+        $users = $repository->findAll();
+        return $this->render('users.html.twig',['users'=>$users]);
+    }
+    /**
+     * @Route ("/delete_user/{id}","delete_user")
+     */
+    public function DeleteUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager){
+        $user = $repository->find($id);
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('success','le compte à été supprimé');
+
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
+
+    /**
+     * @Route ("/ban_user/{id}","ban_user")
+     */
+    public function BanUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager){
+        $user = $repository->find($id);
+
+        if ($user->getRoles() == ['ROLE_USER']){
+            $user->setRoles(['ROLE_BAN']);
+            $this->addFlash('success','le compte à été banni');
+        } else {
+            $user->setRoles(['ROLE_USER']);
+            $this->addFlash('success','le compte à été réactivé');
+        }
+        $entityManager->flush();
+
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
 }
