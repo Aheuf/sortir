@@ -1,4 +1,4 @@
-{% extends '../base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block body %}
 
@@ -21,7 +21,7 @@
                     </div>
                     <div class="modal-body">
                         <h1 class="text-center">Créer un compte</h1>
-                        {{ form_start(registrationForm) }}
+                        {{ form_start(registrationForm, {'action': path('admin_users'), 'method': 'POST', 'id':'formUser'}) }}
                         {{ form_row(registrationForm.nom) }}
                         {{ form_row(registrationForm.prenom) }}
                         {{ form_row(registrationForm.pseudo) }}
@@ -40,9 +40,10 @@
                         {{ form_row(registrationForm.email) }}
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <button type="submit" class="btn btn-outline-success my-5"><i
-                                        class="bi bi-person-plus"></i> Créer un compte
-                            </button>
+                            <input type="submit" class="btn btn-outline-success my-5 submitBtn"
+                                   onclick="validationModal();" value="submit" name="submitAction"><i
+                                    class="bi bi-person-plus"></i> Créer un compte
+                            </input>
                         </div>
                         {{ form_end(registrationForm) }}
                     </div>
@@ -97,9 +98,39 @@
         {% endfor %}
     </table>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
 
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script>
+        function validationModal() {
+            var data = $('#formUser').serialize();
+            $.ajax({
+                type: 'POST',
+                data: data,
+                url: $('#formUser').attr('action'),
+                beforeSend: function () {
+                    document.getElementById("loaderInt1").style.display = "block";
+                },
+                success: function (data) {
+                    $("#registrationForm").html(data);
+                    document.getElementById("loaderInt1").style.display = "none";
+                },
+                error: function () {
+                    alert("Error ajax");
+                    document.getElementById("loaderInt1").style.display = "none";
+                }
+            })
+        }
+    </script>
 {% endblock %}
 
 {% block title %}
     {{ parent() }} | comptes
 {% endblock %}
+
+

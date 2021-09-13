@@ -205,30 +205,33 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
 
+        if ($request->getMethod() == "POST") {
+            if ($request->request->get("submitAction") == "submit") {
+                $userRegisterAdmin->setAdministrateur(0);
+                $userRegisterAdmin->setActif(1);
+                $campus = $campusRepository->findOneBy(['id' => $request->get('campus')]);
+                $userRegisterAdmin->setEstRattacheA($campus);
+                $userRegisterAdmin->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $userRegisterAdmin,
+                        'Pa$$w0rd'));
+                $userRegisterAdmin->setRoles(["ROLE_USER"]);
+                $campus = $repository->findOneBy(['id' => $request->get('campus')]);
+                $userRegisterAdmin->setEstRattacheA($campus);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+                dd($userRegisterAdmin);
+                $entityManager = $this->getDoctrine()->getManager();
 
-            $userRegisterAdmin->setAdministrateur(0);
-            $userRegisterAdmin->setActif(1);
-            $campus = $campusRepository->findOneBy(['id' => $request->get('campus')]);
-            $userRegisterAdmin->setEstRattacheA($campus);
-            $userRegisterAdmin->setPassword(
-                $passwordEncoder->encodePassword(
-                    $userRegisterAdmin,
-                    'Pa$$w0rd'));
+                $entityManager->persist($userRegisterAdmin);
+                $entityManager->flush();
 
-            dd($userRegisterAdmin);
-            $entityManager = $this->getDoctrine()->getManager();
-
-            $entityManager->persist($userRegisterAdmin);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Le compte à été créé');
-            return $this->redirect($_SERVER['HTTP_REFERER']);
+                $this->addFlash('success', 'Le compte à été créé');
+                return $this->redirect($_SERVER['HTTP_REFERER']);
+            }
         }
 
 
-        return $this->render('users.html.twig', ['users' => $users, 'registrationForm' => $form->createView(), 'allCampus' => $allCampus]);
+        return $this->render('admin/users.html.twig', ['users' => $users, 'registrationForm' => $form->createView(), 'allCampus' => $allCampus]);
     }
 
     /**
