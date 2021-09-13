@@ -24,6 +24,16 @@ class AdminController extends AbstractController
 {
 
     /**
+     * @Route("/dashboard", name="dashboard")
+     */
+    public function index(): Response
+    {
+        return $this->render('admin/index.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
+
+    /**
      * @Route("/villes", name="villes")
      */
     public function villes(VilleRepository $villeRepository, Request $request, EntityManagerInterface $entityManager): Response
