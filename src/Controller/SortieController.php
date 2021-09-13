@@ -24,6 +24,7 @@ class SortieController extends AbstractController
      */
     public function index(Request $request, SortieRepository $sortieRepository, Security $security): Response
     {
+
         $sorties = $sortieRepository->findAll();
         $rechercheForm = $this->createForm(rechercheType::class);
 
