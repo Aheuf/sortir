@@ -75,7 +75,6 @@
 
     {# Fin du formulaire #}
 
-
     <div class="col-12 my-5">
         <table class="table table-dark table-striped">
             <thead>
@@ -119,9 +118,10 @@
                         <a href="{{ path('sortie_sInscrire', {'sortieId': sortie.id, 'userId': app.user.id}) }}">S'inscrire</a>
                     {% endif %}
 
+
                     {# Affiche le bouton Se desister si nous sommes inscrit #}
                     {% for inscrit in sortie.getParticipant().getEstInscrit() %}
-                        {% if inscrit == app.user and sortie.getEtat().getLibelle() == 'Ouvert' %}
+                        {% if inscrit == app.user.id and sortie.getEtat().getLibelle() == 'Ouvert' %}
                             <a href="#">Se desister</a>
                         {% endif %}
                     {% endfor %}
