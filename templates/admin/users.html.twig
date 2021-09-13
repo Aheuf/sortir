@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '../base.html.twig' %}
 
 {% block body %}
 
@@ -78,17 +78,17 @@
                 {% else %}
                     <td>
                         {% if user.roles[0] == 'ROLE_USER' %}
-                            <form action="{{ path('admin_app_admin_banuser',{id:user.id}) }}">
+                            <form action="{{ path('admin_ban_user',{id:user.id}) }}">
                                 <button class="btn btn-warning"><i class="bi bi-power"></i></button>
                             </form>
                         {% elseif user.roles[0] == 'ROLE_BAN' %}
-                            <form action="{{ path('admin_app_admin_banuser',{id:user.id}) }}">
+                            <form action="{{ path('admin_ban_user',{id:user.id}) }}">
                                 <button class="btn btn-success"><i class="bi bi-power"></i></button>
                             </form>
                         {% endif %}
                     </td>
                     <td>
-                        <form action="{{ path('admin_app_admin_deleteuser',{id:user.id}) }}">
+                        <form action="{{ path('admin_delete_user',{id:user.id}) }}">
                             <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
                         </form>
                     </td>

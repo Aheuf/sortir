@@ -192,7 +192,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route ("/users","users")
+     * @Route ("/users",name="users")
      */
     public function Users(ParticipantRepository $repository, CampusRepository $campusRepository, UserPasswordEncoderInterface $passwordEncoder, Request $request)
     {
@@ -232,7 +232,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route ("/delete_user/{id}","delete_user")
+     * @Route ("/delete_user/{id}",name="delete_user")
      */
     public function DeleteUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager)
     {
@@ -245,7 +245,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route ("/ban_user/{id}","ban_user")
+     * @Route ("/ban_user/{id}",name="ban_user")
      */
     public function BanUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager)
     {

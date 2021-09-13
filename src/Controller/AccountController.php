@@ -13,12 +13,12 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/account","account")
+ * @Route("/account",name="account")
  */
 class AccountController extends AbstractController
 {
     /**
-     * @Route("/{id}","")
+     * @Route("/{id}",name="list")
      */
     public function show($id, ParticipantRepository $repository, CampusRepository $campusRepository){
         $user = $repository->find($id);
@@ -32,7 +32,7 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @Route ("/update/{id}","")
+     * @Route ("/update/{id}",name="update")
      */
     public function update($id, ParticipantRepository $repository,Request $request,CampusRepository $campusRepository,
                            EntityManagerInterface $entityManager){
