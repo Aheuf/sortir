@@ -3,7 +3,7 @@
 {% block title %}{{ parent() }} | Connexion !{% endblock %}
 
 {% block body %}
-    <link rel="stylesheet" href="{{ asset('css/logs.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <div class="container mt-5 col-sm-8 col-md-5 {% if not app.user %}bg-light{% endif %} rounded position-absolute top-50 start-50 translate-middle">
         <form method="post">
@@ -13,7 +13,7 @@
 
             {% if app.user %}
                 <div class="mb-3">
-                    <h1 class="text-center">Bienvenu {{ app.user.pseudo }}</h1>
+                    <h1 class="text-center text-light">Bienvenu {{ app.user.pseudo }}</h1>
                 </div>
 
             {% else %}
@@ -32,7 +32,7 @@
 
             <span class="d-flex justify-content-around mt-2">
                 <a href="{{ path('app_register') }}">Créer un compte</a>
-                <a class="text-danger" href="{{ path('askMail') }}">Mot de passe oublié ?</a>
+                <a class="text-danger" href="#">Mot de passe oublié ?</a>
             </span>
             <br>
 
