@@ -5,10 +5,26 @@
 {% endblock %}
 
 {% block body %}
+    <div>
+        <h2 class="text-center mt-5">Annuler une sortie</h2>
+    </div>
+    <div>
+        Nom de la sortie : {{ sortie.nom }}
+    </div>
+    <div>
+        Date et heure de la sortie : {{ sortie.dateHeureDebut|date('d-m-Y') }}
+    </div>
+    <div>
+        Campus :
+    </div>
+    <div>
+        Lieu :
+    </div>
+    <div>
+        Motif :
+    </div>
 
-    {{ form_start(sortieForm) }}
-
-    {{ form_widget(sortieForm) }}
-
-    {{ form_end(sortieForm) }}
+    <div>
+        <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
+    </div>
 {% endblock %}

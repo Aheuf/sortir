@@ -1,11 +1,56 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ parent() }} | Afficher une sortie
+    {{ parent() }} | {{ sortie.nom }}
 {% endblock %}
 
 {% block body %}
-    <div>
-        <h2>Afficher une sortie</h2>
-    </div>
+    {# <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded"> #}
+        <div>
+            <h2 class="text-center mt-5">Afficher une sortie</h2>
+        </div>
+        <div>
+            Nom de la sortie : {{ sortie.nom }}
+        </div>
+        <div>
+            Date et heure de la sortie : {{ sortie.dateHeureDebut|date('d-m-Y') }}
+        </div>
+        <div>
+            Date limite d'inscription : {{ sortie.dateLimiteInscription|date('d-m-Y') }}
+        </div>
+        <div>
+            Nombre de places : {{ sortie.nbInscriptionMax }}
+        </div>
+        <div>
+            Durée : {{ sortie.duree }} minutes
+        </div>
+        <div>
+            Description et infos : {{ sortie.infoSortie }}
+        </div>-
+
+        <div>
+            Campus :
+            {# Campus : {{ sortie.campus }} #}{#, {value:app.user.estRattacheA.nom} }} #}
+        </div>
+        <div>
+            Lieu :
+            {# Lieu : {{ sortie.lieuSortie }} #}
+        </div>
+        <div>
+            Rue :
+        </div>
+        <div>
+            Code Postal :
+        </div>
+        <div>
+            Latitude :
+        </div>
+        <div>
+            Longitude :
+        </div>-
+
+        <div>
+            Liste des particpants inscrits :
+        </div>
+    {# </div> #}
 {% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\Lieu;
 use App\Entity\Sortie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,17 +19,28 @@ class CreateSortieType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom')
-            ->add('dateHeureDebut', DateType::class, ['widget' => 'single_text'])
-            ->add('duree', IntegerType::class)
-            ->add('dateLimiteInscription', DateType::class, ['widget' => 'single_text'])
-            ->add('nbInscriptionMax')
-            ->add('infoSortie')
+            ->add('nom', TextType::class, [
+                'label' => 'Nom de la sortie : '])
+            ->add('dateHeureDebut', DateTimeType::class, [
+                'label' => 'Date et heure de la sortie : ',
+                'widget' => 'single_text'])
+            ->add('dateLimiteInscription', DateType::class, [
+                'label' => 'Date limite d\'inscription : ',
+                'widget' => 'single_text'])
+            ->add('nbInscriptionMax', IntegerType::class, [
+                'label' => 'Nombre de places : '])
+            ->add('duree', IntegerType::class, [
+                'label' => 'Durée : '])
+            ->add('infoSortie') //, TextType::class, [
+                //'label' => 'Description et infos : '
+            //])
 
-            ->add('campus', TextType::class, ['attr'=>['disabled'=>true]])
+            ->add('campus', TextType::class, [
+                'label' => 'Campus : ',
+                'attr'=>['disabled'=>true]])
 
             ->add('lieuSortie', EntityType::class, [
-                'label' => 'Lieu',
+                'label' => 'Lieu : ',
                 //quelle est la classe à afficher ici ?
                 'class' => Lieu::class,
                 //quelle propriété utiliser pour les <option> dans la liste déroulante ?
