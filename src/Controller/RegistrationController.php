@@ -32,6 +32,7 @@ class RegistrationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setAdministrateur(0);
             $user->setActif(1);
+            $user->setRoles(["ROLE_USER"]);
                                             //gestion rattachement campus
 
             $campus = $repository->findOneBy(['id'=>$request->get('campus')]);

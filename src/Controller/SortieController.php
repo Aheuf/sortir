@@ -7,6 +7,7 @@ use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
 use App\Repository\CampusRepository;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,14 +43,19 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/s_inscrire", name="sortie_sInscrire")
+     * @Route("/sortie/s_inscrire/{sortieId}/{userId}", name="sortie_sInscrire")
      */
-    public function sInscrire(): Response
+    public function sInscrire($sortieId, $userId, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
     {
+        $sortie = $sortieRepository->find($sortieId);
+        $user = $participantRepository->find($userId);
         if ($this->getUser() != $user) {
             $this->addFlash('Warn', 'Vous ne pouvez pas inscrire un autre utilisateur !');
         } else {
-            //Appel a la fonction sortie->addParticipant($participant)
+            $sortie->addParticipant($user);
+            $user->addEstInscrit($sortie);
+            //dd($sortie->getParticipants()->toArray());
+            $entityManager->flush();
 
             $this->addFlash('success', 'Votre inscription a bien été prise en compte !');
         }
@@ -58,16 +64,39 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/se_desister", name="sortie_seDesister")
+     * @Route("/sortie/se_desister/{sortieId}/{userId}", name="sortie_seDesister")
      */
-    public function seDesister(): Response
+    public function seDesister($sortieId, $userId, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
     {
+        $sortie = $sortieRepository->find($sortieId);
+        $user = $participantRepository->find($userId);
         if ($this->getUser() != $user) {
             $this->addFlash('Warn', 'Vous ne pouvez pas désinscrire un autre utilisateur !');
         } else {
-            //Appel a la fonction sortie->removeParticipant($participant)
+            $sortie->removeParticipant($user);
+            $user->removeEstInscrit($sortie);
+
+            $entityManager->flush();
 
             $this->addFlash('success', 'Votre désinscription a bien été prise en compte !');
+        }
+
+        return $this->redirectToRoute('sortie');
+    }
+
+    /**
+     * @Route("/sortie/publier/{sortieId}/{userId}", name="sortie_publier")
+     */
+    public function publier($sortieId, $userId, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
+    {
+        //$sortie = $sortieRepository->find($sortieId);
+        $user = $participantRepository->find($userId);
+        if ($this->getUser() != $user) {
+            $this->addFlash('Warn', 'Vous ne pouvez pas désinscrire un autre utilisateur !');
+        } else {
+
+
+            $this->addFlash('success', 'Votre sortie a bien été annulée !');
         }
 
         return $this->redirectToRoute('sortie');

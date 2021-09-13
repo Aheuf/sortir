@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <br>
+    <h2 style="text-align: center">Panneau de controle de: {{ app.user.prenom ~ ' ' ~ app.user.nom }} </h2>
+    <br> <br>
+
+        <div class="row  justify-content-center" >
+            <div class="col-sm-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Gestion des Campus</h5>
+                        <p class="card-text"><i
+                                    class="bi bi-house-fill fs-1"></i></p>
+                        <a href="{{ path('admin_campus') }}" class="btn btn-primary"> Campus </a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-sm-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Gestion des Villes</h5>
+                        <br>
+                        <p class="card-text"><i class="bi bi-pin-map-fill fs-1"></i></p>
+                        <a href="{{ path('admin_villes') }}" class="btn btn-primary"> Villes </a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="col-sm-2">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"> Liste des Utilisateurs</h5>
+                        <p class="card-text"><i
+                                    class="bi bi-person-lines-fill fs-1"></i></p>
+                        <a href="{{ path('admin_app_admin_users') }}" class="btn btn-primary"> Listes </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | Panneau de controle
+{% endblock %}
+

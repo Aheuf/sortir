@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Campus;
+use App\Entity\Participant;
 use App\Entity\Ville;
 use App\Form\CampusType;
+use App\Form\RegistrationFormType;
 use App\Form\VilleType;
 use App\Repository\CampusRepository;
 use App\Repository\ParticipantRepository;
@@ -16,12 +18,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/admin", name="admin_")
  */
 class AdminController extends AbstractController
 {
+
+    /**
+     * @Route("/dashboard", name="dashboard")
+     */
+    public function index(): Response
+    {
+        return $this->render('admin/index.html.twig', [
+            'controller_name' => 'AdminController',
+        ]);
+    }
 
     /**
      * @Route("/villes", name="villes")
@@ -181,18 +194,52 @@ class AdminController extends AbstractController
     /**
      * @Route ("/users","users")
      */
-    public function Users(ParticipantRepository $repository){
+    public function Users(ParticipantRepository $repository, CampusRepository $campusRepository, UserPasswordEncoderInterface $passwordEncoder, Request $request)
+    {
         $users = $repository->findAll();
-        return $this->render('users.html.twig',['users'=>$users]);
+
+        $userRegisterAdmin = new Participant();
+        $allCampus = $campusRepository->findAll();
+
+        $form = $this->createForm(RegistrationFormType::class, $userRegisterAdmin);
+        $form->handleRequest($request);
+
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $userRegisterAdmin->setAdministrateur(0);
+            $userRegisterAdmin->setActif(1);
+            $campus = $campusRepository->findOneBy(['id' => $request->get('campus')]);
+            $userRegisterAdmin->setEstRattacheA($campus);
+            $userRegisterAdmin->setPassword(
+                $passwordEncoder->encodePassword(
+                    $userRegisterAdmin,
+                    'Pa$$w0rd'));
+
+            dd($userRegisterAdmin);
+            $entityManager = $this->getDoctrine()->getManager();
+
+            $entityManager->persist($userRegisterAdmin);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le compte à été créé');
+            return $this->redirect($_SERVER['HTTP_REFERER']);
+        }
+
+
+        return $this->render('users.html.twig', ['users' => $users, 'registrationForm' => $form->createView(), 'allCampus' => $allCampus]);
     }
+
     /**
      * @Route ("/delete_user/{id}","delete_user")
      */
-    public function DeleteUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager){
+    public function DeleteUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager)
+    {
         $user = $repository->find($id);
         $entityManager->remove($user);
         $entityManager->flush();
-        $this->addFlash('success','le compte à été supprimé');
+        $this->addFlash('success', 'le compte à été supprimé');
 
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
@@ -200,18 +247,21 @@ class AdminController extends AbstractController
     /**
      * @Route ("/ban_user/{id}","ban_user")
      */
-    public function BanUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager){
+    public function BanUser($id, ParticipantRepository $repository, EntityManagerInterface $entityManager)
+    {
         $user = $repository->find($id);
 
-        if ($user->getRoles() == ['ROLE_USER']){
+        if ($user->getRoles() == ['ROLE_USER']) {
             $user->setRoles(['ROLE_BAN']);
-            $this->addFlash('success','le compte à été banni');
+            $this->addFlash('success', 'le compte à été banni');
         } else {
             $user->setRoles(['ROLE_USER']);
-            $this->addFlash('success','le compte à été réactivé');
+            $this->addFlash('success', 'le compte à été réactivé');
         }
         $entityManager->flush();
 
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
+
+
 }

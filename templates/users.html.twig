@@ -1,16 +1,66 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<div class="container">
+
+
+    <br>
+    <div class="container">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalUtilisateur"><i
+                    class="bi bi-person-plus"></i> Ajout d'un nouvel Utilisateur
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modalUtilisateur" tabindex="-1" aria-labelledby="utilisateurModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="utilisateurModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h1 class="text-center">Créer un compte</h1>
+                        {{ form_start(registrationForm) }}
+                        {{ form_row(registrationForm.nom) }}
+                        {{ form_row(registrationForm.prenom) }}
+                        {{ form_row(registrationForm.pseudo) }}
+                        <div class="d-none">
+                            {{ form_row(registrationForm.avatar, {required:false}) }}
+                            {{ form_row(registrationForm.plainPassword,{required:false}) }}
+                        </div>
+                        <label for="campus">Campus</label>
+                        <select name="campus" id="campus" class="form-select">
+                            {% for campus in allCampus %}
+                                <option value="{{ campus.id }}">{{ campus.nom }}</option>
+                            {% endfor %}
+                        </select>
+
+                        {{ form_row(registrationForm.telephone) }}
+                        {{ form_row(registrationForm.email) }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-outline-success my-5"><i
+                                        class="bi bi-person-plus"></i> Créer un compte
+                            </button>
+                        </div>
+                        {{ form_end(registrationForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <table class="mt-5 table table-hover text-center">
-        <tr>
+        <tr class="table-active">
             <th>pseudo</th>
             <th>nom</th>
             <th>prenom</th>
             <th>mail</th>
             <th>telephone</th>
             <th>campus</th>
-            <th> activer / désactiver </th>
+            <th> activer / désactiver</th>
             <th>supprimer</th>
         </tr>
         {% for user in users %}
@@ -22,9 +72,9 @@
                 <td>{{ user.telephone }}</td>
                 <td>{{ user.estRattacheA.nom }}</td>
                 {% if user.roles[0] == 'ROLE_ADMIN' %}
-                <td colspan="2">
-                    admin
-                </td>
+                    <td colspan="2">
+                        admin
+                    </td>
                 {% else %}
                     <td>
                         {% if user.roles[0] == 'ROLE_USER' %}
@@ -46,10 +96,10 @@
             </tr>
         {% endfor %}
     </table>
-</div>
+
 
 {% endblock %}
 
 {% block title %}
-{{ parent() }} | comptes
+    {{ parent() }} | comptes
 {% endblock %}

@@ -28,7 +28,14 @@
             </tr>
             </thead>
             <tbody>
-
+            <tr>
+                {{ form_start(CampusForm) }}
+                <td>{{ form_row(CampusForm.nom) }}</td>
+                <td>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i></button>
+                </td>
+                {{ form_end(CampusForm) }}
+            </tr>
             {% for Campus in campus %}
                 <tr>
                     <form method="post" action="{{ path('admin_update_campus',{'id':Campus.id}) }}">
@@ -43,14 +50,7 @@
                 </tr>
             {% endfor %}
 
-            <tr>
-                {{ form_start(CampusForm) }}
-                <td>{{ form_row(CampusForm.nom) }}</td>
-                <td>
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i></button>
-                </td>
-                {{ form_end(CampusForm) }}
-            </tr>
+
             </tbody>
         </table>
     </div>

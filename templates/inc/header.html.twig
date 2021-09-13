@@ -11,11 +11,9 @@
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ path('admin_villes') }}">Ville</a>
+                                <a class="nav-link" href="{{ path('admin_dashboard') }}"><i class="bi bi-menu-button-wide-fill"></i> Panneau de controle</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ path('admin_campus') }}">Campus</a>
-                            </li>
+
                         {% endif %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('sortie') }}"><i class="bi bi-house"></i> Accueil</a>
