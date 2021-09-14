@@ -26,7 +26,7 @@ class SortieController extends AbstractController
     public function index(Request $request, SortieRepository $sortieRepository, Security $security): Response
     {
 
-        $sorties = $sortieRepository->findAll();
+        $sorties = $sortieRepository->findByDate();
         $rechercheForm = $this->createForm(rechercheType::class);
 
         if($rechercheForm->handleRequest($request)->isSubmitted()) {
@@ -92,11 +92,11 @@ class SortieController extends AbstractController
         //$sortie = $sortieRepository->find($sortieId);
         $user = $participantRepository->find($userId);
         if ($this->getUser() != $user) {
-            $this->addFlash('Warn', 'Vous ne pouvez pas désinscrire un autre utilisateur !');
+            $this->addFlash('Warn', 'Vous ne pouvez pas publier la sortie d\'un autre utilisateur !');
         } else {
 
 
-            $this->addFlash('success', 'Votre sortie a bien été annulée !');
+            $this->addFlash('success', 'Votre sortie a bien été publiée !');
         }
 
         return $this->redirectToRoute('sortie');
