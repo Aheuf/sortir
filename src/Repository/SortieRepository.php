@@ -25,13 +25,17 @@ class SortieRepository extends ServiceEntityRepository
     //  * @return Sortie[] Returns an array of Sortie objects
     //  */
 
-    public function findByResearch($sortiesData, $security){
+    public function findByResearch($sortiesData, $security)
+    {
         $queryBuilder = $this->createQueryBuilder('s');
+
+        $queryBuilder->where('s.dateLimiteInscription > :dateLimite');
+        $queryBuilder->setParameter('dateLimite', date('Y-m-d H:i:s', strtotime('-1 month')));
 
         //filtre choix du campus
         if ($sortiesData['campus'] != null) {
             $queryBuilder->leftJoin('s.campus', 'campus');
-            $queryBuilder->where('campus.nom = :campusNom');
+            $queryBuilder->andWhere('campus.nom = :campusNom');
             $queryBuilder->setParameter('campusNom', $sortiesData['campus']->getNom());
         }
 
@@ -44,13 +48,13 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         //filtre checkbox pour les sorties passées
-        if ($sortiesData['passees'] == true ) {
+        if ($sortiesData['passees'] == true) {
             $queryBuilder->andWhere('s.dateLimiteInscription < :aujourdhui');
             $queryBuilder->setParameter('aujourdhui', date("Y-m-d H:i:s"));
         }
 
         //filtre checkbox pour les sorties que j'organise
-        if ($sortiesData['organisateur'] == true ) {
+        if ($sortiesData['organisateur'] == true) {
             $queryBuilder->leftJoin('s.participant', 'participant');
             $queryBuilder->andWhere('participant.id = :moi');
             $queryBuilder->setParameter('moi', $security->getUser()->getId());
@@ -62,6 +66,27 @@ class SortieRepository extends ServiceEntityRepository
                 $queryBuilder->expr()->like('s.nom', ':nom')
             );
             $queryBuilder->setParameter('nom', '%' . $sortiesData['nom'] . '%');
+        }
+
+        if ($sortiesData['inscrit'] == true) {
+            $queryBuilder->leftJoin('s.participants', 'participants');
+            $queryBuilder->andWhere('participants.id = :moi');
+            $queryBuilder->setParameter('moi', $security->getUser()->getId());
+        }
+
+        if ($sortiesData['noninscrit'] == true) {
+            $user = $security->getUser()->getId();
+
+            //$queryBuilder->innerJoin('s.participants', 'p');
+            //$queryBuilder->andWhere('p.id != :id');
+            //$queryBuilder->setParameter('id', $user);
+
+            $queryBuilder->innerJoin('s.participants', 'p');
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->notIn('p.id', ':id')
+            );
+            $queryBuilder->setParameter('id', $user);
+
         }
 
 

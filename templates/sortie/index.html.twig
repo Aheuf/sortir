@@ -92,67 +92,74 @@
             <tbody>
 
             {% for sortie in sorties %}
-            <tr class="align-middle">
-                <th scope="col">{{ sortie.getnom() }}</th>
-                <th scope="col">{{ sortie.getDateHeureDebut()|date('d-m-Y') }}</th>
-                <th scope="col">{{ sortie.getDateLimiteInscription()|date('d-m-Y') }}</th>
-                <th scope="col">{{ sortie.getParticipants()|length ~'/'~ sortie.getNbInscriptionMax() }}</th>
-                <th scope="col">{{ sortie.getEtat().getLibelle() }}</th>
+                <tr class="align-middle">
+                    <th scope="col">{{ sortie.getnom() }}</th>
+                    <th scope="col">{{ sortie.getDateHeureDebut()|date('d-m-Y') }}</th>
+                    <th scope="col">{{ sortie.getDateLimiteInscription()|date('d-m-Y') }}</th>
+                    <th scope="col">{{ sortie.getParticipants()|length ~'/'~ sortie.getNbInscriptionMax() }}</th>
+                    <th scope="col">{{ sortie.getEtat().getLibelle() }}</th>
 
-                <th scope="col">{% for inscrit in sortie.getParticipants().toArray() %}
-                        {% if inscrit == app.user %}
-                        <div class="ms-3">
-                            <i class="bi bi-check-lg" style="color: white"></i>
-                        </div>
+                    <th scope="col">{% for inscrit in sortie.getParticipants().toArray() %}
+                            {% if inscrit == app.user %}
+                                <div class="ms-3">
+                                    <i class="bi bi-check-lg" style="color: white"></i>
+                                </div>
+                            {% endif %}
+                        {% endfor %}</th>
+                    <th scope="col">{{ sortie.getParticipant().getPrenom() }}</th>
+                    <th scope="col">
+
+                        {# Afficher le lien de detail de la sortie #}
+                        {% if sortie.getEtat().getLibelle() != 'En création' %}
+                            <a class="ms-2 btn btn-outline-light"
+                               href="{{ path('sortie_detail', {'id':sortie.id}) }}">Afficher</a>
                         {% endif %}
-                {% endfor %}</th>
-                <th scope="col">{{ sortie.getParticipant().getPrenom() }}</th>
-                <th scope="col">
 
-                    {# Afficher le lien de detail de la sortie #}
-                    {% if sortie.getEtat().getLibelle() != 'En création' %}
-                        <a class="ms-2 btn btn-outline-light" href="{{ path('sortie_detail', {'id':sortie.id}) }}">Afficher</a>
-                    {% endif %}
+                        {# Afficher le bouton S'inscrire si le nombre de place max n'est pas atteint, que l'état est ouvert et que la date max n'est pas passée #}
 
-                    {# Afficher le bouton S'inscrire si le nombre de place max n'est pas atteint, que l'état est ouvert et que la date max n'est pas passée #}
+                        {% set estInscrit = false %}
 
-                    {% set estInscrit = false %}
+                        {% for inscrit in sortie.getParticipants().toArray() %}
+                            {% if inscrit == app.user %}
+                                {% set estInscrit = true %}
+                            {% endif %}
+                        {% endfor %}
 
-                    {% for inscrit in sortie.getParticipants().toArray() %}
-                        {% if inscrit == app.user %}
-                            {% set estInscrit = true %}
+                        {% if estInscrit != true
+                            and sortie.getParticipants()|length < sortie.getNbInscriptionMax()
+                            and sortie.getEtat().getLibelle() == 'Ouvert'
+                            and date() < sortie.getDateLimiteInscription() %}
+                            <a class="ms-2 btn btn-outline-light"
+                               href="{{ path('sortie_sInscrire', {'sortieId': sortie.id, 'userId': app.user.id}) }}">S'inscrire</a>
                         {% endif %}
-                    {% endfor %}
-
-                    {% if estInscrit != true
-                        and sortie.getParticipants()|length < sortie.getNbInscriptionMax()
-                        and sortie.getEtat().getLibelle() == 'Ouvert'
-                        and date() < sortie.getDateLimiteInscription() %}
-                        <a class="ms-2 btn btn-outline-light" href="{{ path('sortie_sInscrire', {'sortieId': sortie.id, 'userId': app.user.id}) }}">S'inscrire</a>
-                    {% endif %}
 
 
-                    {# Affiche le bouton Se desister si nous sommes inscrit #}
-                    {% for inscrit in sortie.getParticipants().toArray() %}
-                        {% if inscrit.id == app.user.id and sortie.getEtat().getLibelle() == 'Ouvert' %}
-                            <a class="ms-2 btn btn-outline-light" href="{{ path('sortie_seDesister', {'sortieId': sortie.id, 'userId': app.user.id}) }}">Se desister</a>
+                        {# Affiche le bouton Se desister si nous sommes inscrit #}
+                        {% for inscrit in sortie.getParticipants().toArray() %}
+                            {% if inscrit.id == app.user.id and sortie.getEtat().getLibelle() == 'Ouvert' %}
+                                <a class="ms-2 btn btn-outline-light"
+                                   href="{{ path('sortie_seDesister', {'sortieId': sortie.id, 'userId': app.user.id}) }}">Se
+                                    desister</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {# Affiche le bouton annuler la sortie si nous sommes l'organisateur #}
+                        {% if sortie.getParticipant().getEmail() == app.user.email and sortie.getEtat().getLibelle() == 'Ouverte' %}
+                            <a class="ms-2 btn btn-outline-light"
+                               href=" {{ path('sortie_annuler', {'id':sortie.id}) }} ">Annuler</a>
                         {% endif %}
-                    {% endfor %}
 
-                    {# Affiche le bouton annuler la sortie si nous sommes l'organisateur #}
-                    {% if sortie.getParticipant().getEmail() == app.user.email and sortie.getEtat().getLibelle() == 'Ouverte' %}
-                        <a class="ms-2 btn btn-outline-light" href=" {{ path('sortie_annuler', {'id':sortie.id})}} ">Annuler</a>
-                    {% endif %}
+                        {% if sortie.getParticipant().getEmail() == app.user.email and sortie.getEtat().getLibelle() == 'En création' %}
+                            <a class="ms-2 btn btn-outline-light"
+                               href=" {{ path('sortie_publier', {'sortieId': sortie.id, 'userId': app.user.id}) }} ">Publier</a>
+                        {% endif %}
 
-                    {% if sortie.getParticipant().getEmail() == app.user.email and sortie.getEtat().getLibelle() == 'En création' %}
-                        <a class="ms-2 btn btn-outline-light" href=" {{ path('sortie_publier', {'sortieId': sortie.id, 'userId': app.user.id})}} ">Publier</a>
-                    {% endif %}
-
-                    {% if sortie.getEtat().getLibelle() == 'En création' and sortie.getParticipant().getEmail() == app.user.email %}
-                        <a class="ms-2 btn btn-outline-light" href="{{ path('sortie_modifier', {'id':sortie.id}) }}">Modifier</a>
-                    {% endif %}
-                </th>
-            </tr>
+                        {% if sortie.getEtat().getLibelle() == 'En création' and sortie.getParticipant().getEmail() == app.user.email %}
+                            <a class="ms-2 btn btn-outline-light"
+                               href="{{ path('sortie_modifier', {'id':sortie.id}) }}">Modifier</a>
+                        {% endif %}
+                    </th>
+                </tr>
             {% endfor %}
 
             </tbody>
@@ -160,6 +167,6 @@
     </div>
 
     <div class="row justify-content-around pt-5">
-        <a href="{{path('sortie_create',{id:app.user.id}) }}" class="btn btn-lg btn-dark col-3">Créer une sortie</a>
+        <a href="{{ path('sortie_create',{id:app.user.id}) }}" class="btn btn-lg btn-dark col-3">Créer une sortie</a>
     </div>
 {% endblock %}
