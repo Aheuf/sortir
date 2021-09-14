@@ -6,8 +6,24 @@
 
 {% block body %}
 
-    <div>
-        <h2 class="text-center mt-5">Modifier une sortie</h2>
+    <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
+        <h1 class="text-center mt-5">Modifier une sortie</h1>
+        {{ form_start(UpdateSortieForm) }}
+        {{ form_row(UpdateSortieForm.nom, {value:sortie.nom}) }}
+        {{ form_row(UpdateSortieForm.dateHeureDebut) }}
+
+        {{ form_row(UpdateSortieForm.duree, {value:sortie.duree}) }}
+
+        {{ form_row(UpdateSortieForm.dateLimiteInscription) }}
+
+        {{ form_row(UpdateSortieForm.nbInscriptionMax, {value:sortie.nbInscriptionMax}) }}
+        {{ form_row(UpdateSortieForm.infoSortie, {value:sortie.infoSortie}) }}
+        {{ form_row(UpdateSortieForm.campus, {value:app.user.estRattacheA.nom}) }}
+        {{ form_row(UpdateSortieForm.lieuSortie, {value:sortie.lieuSortie}) }}
+        {{ form_end(UpdateSortieForm) }}
+        <form action="{{ path('sortie_annuler',{id:sortie.id}) }}">
+            <button class="btn btn-outline-danger">Annuler</button>
+        </form>
     </div>
 
 {% endblock %}

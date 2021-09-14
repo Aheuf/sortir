@@ -6,7 +6,9 @@ use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
+use App\Form\UpdateSortieType;
 use App\Repository\CampusRepository;
+use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
@@ -199,31 +201,47 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/modifier_sortie/{id}", name="sortie_modifier")
      */
-    public function modify(int $id, SortieRepository $sortieRepository): Response
+    public function modify(int $id,Request $request, SortieRepository $sortieRepository, EtatRepository $repository, EntityManagerInterface $entityManager): Response
     {
-        //todo
 
-        return $this->render('sortie/modify.html.twig', [
-            /////////"sortie" => $sortie
-        ]);
+        $sortie = $sortieRepository->find($id);
+        $form = $this->createForm(UpdateSortieType::class,$sortie);
+
+        $form->handleRequest($request);
+
+        $form['dateHeureDebut']->setData($sortie->getDateHeureDebut());
+        $form['dateLimiteInscription']->setData($sortie->getDateLimiteInscription());
+
+        if ($form->isSubmitted() && $form->isValid()){
+            if ($form->getClickedButton() && 'save' === $form->getClickedButton()->getName()) {
+                $sortie->setEtat($repository->findOneBy(['libelle'=>'En création']));
+            } else {
+                $sortie->setEtat($repository->findOneBy(['libelle'=>'Ouvert']));
+            }
+            $entityManager->flush();
+            return $this->redirectToRoute('sortie_detail',['id'=>$sortie->getId()]);
+        }
+
+        return $this->render('sortie/modify.html.twig', ["sortie" => $sortie, 'UpdateSortieForm'=>$form->createView()]);
     }
 
     /**
      * @Route("/sortie/annuler_sortie/{id}", name="sortie_annuler")
      */
-    public function cancel(int $id, SortieRepository $sortieRepository): Response
+    public function cancel(int $id, SortieRepository $sortieRepository, EtatRepository $repository,EntityManagerInterface $entityManager): Response
     {
         //récupère cette sortie en fonction de l'id présent dans l'URL
         $sortie = $sortieRepository->find($id);
+        $etat = $repository->findOneBy(['libelle'=>'Annulée']);
+        $sortie->setEtat($etat);
+        $entityManager->flush();
 
         //s'il n'existe pas en bdd, on déclenche une erreur 404
         if (!$sortie){
             throw $this->createNotFoundException('Cette sortie n\'existe pas. Désolé!');
         }
-
-        return $this->render('sortie/cancel.html.twig', [
-            "sortie" => $sortie // ->createView()
-        ]);
+        $this->addFlash('danger','la sortie à été supprimée');
+        return $this->redirectToRoute('sortie');
     }
 
 }

@@ -19,35 +19,32 @@ class CreateSortieType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom', TextType::class, [
+            ->add('nom', TextType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Nom de la sortie : '])
-            ->add('dateHeureDebut', DateTimeType::class, [
+            ->add('dateHeureDebut', DateTimeType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Date et heure de la sortie : ',
                 'widget' => 'single_text'])
-            ->add('dateLimiteInscription', DateType::class, [
+            ->add('dateLimiteInscription', DateType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Date limite d\'inscription : ',
                 'widget' => 'single_text'])
-            ->add('nbInscriptionMax', IntegerType::class, [
+            ->add('nbInscriptionMax', IntegerType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Nombre de places : '])
-            ->add('duree', IntegerType::class, [
+            ->add('duree', IntegerType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Durée : '])
-            ->add('infoSortie') //, TextType::class, [
-                //'label' => 'Description et infos : '
-            //])
-
+            ->add('infoSortie',null,['attr'=>['class'=>'form-control'],'label' => 'Description : '])
             ->add('campus', TextType::class, [
                 'label' => 'Campus : ',
-                'attr'=>['disabled'=>true]])
+                'attr'=>['disabled'=>true,'class'=>'form-control']])
 
-            ->add('lieuSortie', EntityType::class, [
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Lieu : ',
                 //quelle est la classe à afficher ici ?
                 'class' => Lieu::class,
                 //quelle propriété utiliser pour les <option> dans la liste déroulante ?
                 'choice_label' => 'nom'])
 
-            ->add('save', SubmitType::class, ['label' => 'Enregistrer'])
-            ->add('publish', SubmitType::class, ['label' => 'Publier une sortie'])
+            ->add('save', SubmitType::class, ['label' => 'Enregistrer', 'attr'=>['class'=>'btn btn-outline-warning']])
+            ->add('publish', SubmitType::class, ['label' => 'Publier une sortie','attr'=>['class'=>'btn btn-outline-success']])
         ;
     }
 

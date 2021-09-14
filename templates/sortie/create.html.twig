@@ -23,7 +23,7 @@
             {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
 
             <label for="ville">Ville :</label>
-            <select name="ville" id="ville">
+            <select class="form-control" name="ville" id="ville">
                 {% for ville in villes %}
                     <option value="{{ ville.id }}">{{ ville.nom }}</option>
                 {% endfor %}
@@ -44,7 +44,7 @@
             </div>
             <br>
 
-                <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
+                <a class="btn btn-outline-danger" href="{{ path('sortie') }}">Annuler</a>
             {{ form_end(sortieForm) }}
         </div>
     </div>
