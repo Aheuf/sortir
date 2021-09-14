@@ -3,13 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Campus;
+use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Ville;
 use App\Form\CampusType;
+use App\Form\CreateSortieType;
 use App\Form\RegistrationFormType;
 use App\Form\VilleType;
 use App\Repository\CampusRepository;
+use App\Repository\EtatRepository;
 use App\Repository\ParticipantRepository;
+use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -88,7 +92,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/update_villes/{id}", name="update_ville")
      */
-    public function UpdateVille(Request $request, int $id): Response
+    public function UpdateVille( int $id): Response
     {
         $em = $this->getDoctrine()->getManager();
         $ville = $em->getRepository('App:Ville')->find($id);
@@ -115,7 +119,6 @@ class AdminController extends AbstractController
 
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
-
 
     /**
      * @Route("/campus", name="campus")
@@ -163,11 +166,10 @@ class AdminController extends AbstractController
 
     }
 
-
     /**
      * @Route("/update_campus/{id}", name="update_campus")
      */
-    public function UpdateCampus(Request $request, int $id): Response
+    public function UpdateCampus( int $id): Response
     {
         $em = $this->getDoctrine()->getManager();
         $ville = $em->getRepository('App:Campus')->find($id);
@@ -195,12 +197,11 @@ class AdminController extends AbstractController
     /**
      * @Route ("/users",name="users")
      */
-    public function Users(ParticipantRepository $repository, CampusRepository $campusRepository, UserPasswordEncoderInterface $passwordEncoder, Request $request)
+    public function Users(ParticipantRepository $repository, UserPasswordEncoderInterface $passwordEncoder, Request $request)
     {
         $users = $repository->findAll();
 
         $userRegisterAdmin = new Participant();
-        $allCampus = $campusRepository->findAll();
 
         $form = $this->createForm(RegistrationFormType::class, $userRegisterAdmin);
         $form->add('estRattacheA', EntityType::class,
@@ -215,7 +216,7 @@ class AdminController extends AbstractController
 
 
         if ($request->getMethod() == "POST") {
-            if ($request->request->get("submitAction") == "Submit") {
+            if ($request->request->get("submitAction") == "Enregistrement") {
 
                 $userRegisterAdmin->setAdministrateur(0);
                 $userRegisterAdmin->setActif(1);
@@ -226,8 +227,6 @@ class AdminController extends AbstractController
 
                 $userRegisterAdmin->setRoles(["ROLE_USER"]);
 
-
-                dd($userRegisterAdmin);
                 $entityManager = $this->getDoctrine()->getManager();
 
                 $entityManager->persist($userRegisterAdmin);
@@ -239,7 +238,7 @@ class AdminController extends AbstractController
         }
 
 
-        return $this->render('admin/users.html.twig', ['users' => $users, 'registrationForm' => $form->createView(), 'allCampus' => $allCampus]);
+        return $this->render('admin/users.html.twig', ['users' => $users, 'registrationForm' => $form->createView()]);
     }
 
     /**
@@ -274,5 +273,58 @@ class AdminController extends AbstractController
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
 
+    /**
+     * @Route ("/sorties",name="sorties")
+     */
+    public function Sorties(SortieRepository $sortieRepository, EtatRepository $etatRepository, Request $request)
+    {
+        $etatCancel = $etatRepository->findOneBy(['libelle' => 'Annulée']);
+
+        $form = $this->createFormBuilder()
+            ->add('query', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Entrez le nom de sortie'
+                ]
+            ])
+            ->add('recherche', SubmitType::class, [
+                'attr' => [
+
+                    'class' => 'btn btn-outline-secondary']
+            ])
+            ->getForm();
+
+        if (isset($request->request->get('form')['query'])) {
+            $query = $request->request->get('form')['query'];
+            $sortie = $sortieRepository->findSortieAdmin($query);
+
+        } else {
+            $sortie = $sortieRepository->findAll();
+
+        }
+        return $this->render('admin/sorties.html.twig', [
+            'sorties' => $sortie, 'etatCancel'=>$etatCancel,'formSortieEtat' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/cancel_sortie/{id}", name="cancel_sortie")
+     */
+    public function cancel(int $id, SortieRepository $sortieRepository, EtatRepository $repository, EntityManagerInterface $entityManager): Response
+    {
+        //récupère cette sortie en fonction de l'id présent dans l'URL
+        $sortie = $sortieRepository->find($id);
+        $etat = $repository->findOneBy(['libelle' => 'Annulée']);
+        $sortie->setEtat($etat);
+        $entityManager->flush();
+
+        //s'il n'existe pas en bdd, on déclenche une erreur 404
+        if (!$sortie) {
+            throw $this->createNotFoundException('Cette sortie n\'existe pas. Désolé!');
+        }
+        $this->addFlash('danger', 'la sortie à été supprimée');
+        return $this->redirect($_SERVER['HTTP_REFERER']);
+    }
 
 }

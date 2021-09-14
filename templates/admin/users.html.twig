@@ -5,7 +5,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script>
-        document.getElementById("emmerdeur").addEventListener("click", function validationNewUser() {
+        document.getElementById("submitId").addEventListener("click", function validationNewUser() {
             let data = $("#formUserAdmin").serialize();
             $.ajax({
                 type: "POST",
@@ -55,14 +55,14 @@
                         {{ form_row(registrationForm.nom) }}
                         {{ form_row(registrationForm.prenom) }}
                         {{ form_row(registrationForm.pseudo) }}
-                        {{ form_row(registrationForm.estRattacheA) }}
+                        {{ form_row(registrationForm.estRattacheA, {'attr': {'class':'form-control'}}) }}
                         {{ form_row(registrationForm.telephone) }}
                         {{ form_row(registrationForm.email) }}
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <input class="btn medium primary-bg" name="submitAction" id="emmerdeur"
+                            <input class="btn btn-outline-success my-5" name="submitAction" id="submitId"
                                    type="submit"
-                                   value="Submit"/>
+                                   value="Enregistrement"/>
                         </div>
                         {{ form_end(registrationForm) }}
                     </div>
