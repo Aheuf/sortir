@@ -208,11 +208,13 @@ class SortieController extends AbstractController
         $form = $this->createForm(UpdateSortieType::class,$sortie);
 
         $form->handleRequest($request);
-
-        $form['dateHeureDebut']->setData($sortie->getDateHeureDebut());
-        $form['dateLimiteInscription']->setData($sortie->getDateLimiteInscription());
+        if (!$form->isSubmitted()){
+            $form['dateHeureDebut']->setData($sortie->getDateHeureDebut());
+            $form['dateLimiteInscription']->setData($sortie->getDateLimiteInscription());
+        }
 
         if ($form->isSubmitted() && $form->isValid()){
+
             if ($form->getClickedButton() && 'save' === $form->getClickedButton()->getName()) {
                 $sortie->setEtat($repository->findOneBy(['libelle'=>'En création']));
             } else {
