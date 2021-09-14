@@ -42,7 +42,35 @@ class CreateSortieType extends AbstractType
                 'class' => Lieu::class,
                 //quelle propriété utiliser pour les <option> dans la liste déroulante ?
                 'choice_label' => 'nom'])
+/*
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
+                'label' => 'Rue : ',
+                //quelle est la classe à afficher ici ?
+                'class' => Lieu::class,
+                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
+                'choice_label' => 'rue'])
 
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
+                'label' => 'Code Postale : ',
+                //quelle est la classe à afficher ici ?
+                'class' => Lieu::class,
+                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
+                'choice_label' => 'codePostal'])
+
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
+                'label' => 'Latitude : ',
+                //quelle est la classe à afficher ici ?
+                'class' => Lieu::class,
+                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
+                'choice_label' => 'latitude'])
+
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
+                'label' => 'Longitude : ',
+                //quelle est la classe à afficher ici ?
+                'class' => Lieu::class,
+                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
+                'choice_label' => 'longitude'])
+*/
             ->add('save', SubmitType::class, ['label' => 'Enregistrer', 'attr'=>['class'=>'btn btn-outline-warning']])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie','attr'=>['class'=>'btn btn-outline-success']])
         ;
