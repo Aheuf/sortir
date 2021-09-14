@@ -105,7 +105,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/creer_sortie/{id}", name="sortie_create")
      */
-    public function create($id,
+    public function create(int $id,
                            Request $request,
                            CampusRepository $campusRepository,
                            VilleRepository $villeRepository,
@@ -179,7 +179,9 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/detail_sortie/{id}", name="sortie_detail")
      */
-    public function detail(int $id, SortieRepository $sortieRepository): Response
+    public function detail(int $id,
+                           CampusRepository $campusRepository,
+                           SortieRepository $sortieRepository): Response
     {
         //récupère cette sortie en fonction de l'id présent dans l'URL
         $sortie = $sortieRepository->find($id);
@@ -209,12 +211,18 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/annuler_sortie/{id}", name="sortie_annuler")
      */
-    public function delete(int $id, SortieRepository $sortieRepository): Response
+    public function cancel(int $id, SortieRepository $sortieRepository): Response
     {
-        //todo
+        //récupère cette sortie en fonction de l'id présent dans l'URL
+        $sortie = $sortieRepository->find($id);
+
+        //s'il n'existe pas en bdd, on déclenche une erreur 404
+        if (!$sortie){
+            throw $this->createNotFoundException('Cette sortie n\'existe pas. Désolé!');
+        }
 
         return $this->render('sortie/cancel.html.twig', [
-            /////////////"sortie" => $sortie
+            "sortie" => $sortie // ->createView()
         ]);
     }
 

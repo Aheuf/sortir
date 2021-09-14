@@ -5,32 +5,47 @@
 {% endblock %}
 
 {% block body %}
-    <div>
-        <h2>Créer une sortie</h2>
-    </div>
-    <div>
-        {{ form_start(sortieForm) }}
+    <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
+        <div>
+            <h2 class="text-center mt-5">Créer une sortie</h2>
+        </div>
+        <div>
+            {{ form_start(sortieForm) }}
 
-        {{ form_row(sortieForm.nom) }}
-        {{ form_row(sortieForm.dateHeureDebut) }}
-        {{ form_row(sortieForm.duree) }}minutes
-        {{ form_row(sortieForm.dateLimiteInscription) }}
-        {{ form_row(sortieForm.nbInscriptionMax) }}
-        {{ form_row(sortieForm.infoSortie) }}
-    </div>
-    <div>
-        {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
+            {{ form_row(sortieForm.nom) }}
+            {{ form_row(sortieForm.dateHeureDebut) }}
+            {{ form_row(sortieForm.dateLimiteInscription) }}
+            {{ form_row(sortieForm.nbInscriptionMax) }}
+            {{ form_row(sortieForm.duree) }} minutes
+            {{ form_row(sortieForm.infoSortie) }}
+        </div>-
+        <div>
+            {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
 
-        <label for="ville">Ville</label>
-        <select name="ville" id="ville">
-            {% for ville in villes %}
-                <option value="{{ ville.id }}">{{ ville.nom }}</option>
-            {% endfor %}
-        </select>
+            <label for="ville">Ville</label>
+            <select name="ville" id="ville">
+                {% for ville in villes %}
+                    <option value="{{ ville.id }}">{{ ville.nom }}</option>
+                {% endfor %}
+            </select>
 
-        {{ form_row(sortieForm.lieuSortie) }}
+            {{ form_row(sortieForm.lieuSortie) }}
+            <div>
+                Rue :
+            </div>
+            <div>
+                Code postale :
+            </div>
+            <div>
+                Latitude :
+            </div>
+            <div>
+                Longitude :
+            </div>
+            <br>
 
-            <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
-        {{ form_end(sortieForm) }}
+                <a class="btn btn-danger" href="{{ path('sortie') }}">Annuler</a>
+            {{ form_end(sortieForm) }}
+        </div>
     </div>
 {% endblock %}

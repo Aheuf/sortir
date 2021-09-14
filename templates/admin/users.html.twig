@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <br>
+    <div class="container">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalUtilisateur"><i
+                    class="bi bi-person-plus"></i> Ajout d'un nouvel Utilisateur
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="modalUtilisateur" tabindex="-1" aria-labelledby="utilisateurModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="utilisateurModalLabel">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h1 class="text-center">Créer un compte</h1>
+                        {{ form_start(registrationForm, {'action': path('admin_users'), 'method': 'POST', 'id':'formUser'}) }}
+                        {{ form_row(registrationForm.nom) }}
+                        {{ form_row(registrationForm.prenom) }}
+                        {{ form_row(registrationForm.pseudo) }}
+                        <div class="d-none">
+                            {{ form_row(registrationForm.avatar, {required:false}) }}
+                            {{ form_row(registrationForm.plainPassword,{required:false}) }}
+                        </div>
+                        <label for="campus">Campus</label>
+                        <select name="campus" id="campus" class="form-select">
+                            {% for campus in allCampus %}
+                                <option value="{{ campus.id }}">{{ campus.nom }}</option>
+                            {% endfor %}
+                        </select>
+
+                        {{ form_row(registrationForm.telephone) }}
+                        {{ form_row(registrationForm.email) }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <input type="submit" class="btn btn-outline-success my-5 submitBtn"
+                                   onclick="validationModal();" value="submit" name="submitAction"><i
+                                    class="bi bi-person-plus"></i> Créer un compte
+                            </input>
+                        </div>
+                        {{ form_end(registrationForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <table class="mt-5 table table-hover text-center">
+        <tr class="table-active">
+            <th>pseudo</th>
+            <th>nom</th>
+            <th>prenom</th>
+            <th>mail</th>
+            <th>telephone</th>
+            <th>campus</th>
+            <th> activer / désactiver</th>
+            <th>supprimer</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.pseudo }}</td>
+                <td>{{ user.nom }}</td>
+                <td>{{ user.prenom }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.telephone }}</td>
+                <td>{{ user.estRattacheA.nom }}</td>
+                {% if user.roles[0] == 'ROLE_ADMIN' %}
+                    <td colspan="2">
+                        admin
+                    </td>
+                {% else %}
+                    <td>
+                        {% if user.roles[0] == 'ROLE_USER' %}
+                            <form action="{{ path('admin_ban_user',{id:user.id}) }}">
+                                <button class="btn btn-warning"><i class="bi bi-power"></i></button>
+                            </form>
+                        {% elseif user.roles[0] == 'ROLE_BAN' %}
+                            <form action="{{ path('admin_ban_user',{id:user.id}) }}">
+                                <button class="btn btn-success"><i class="bi bi-power"></i></button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ path('admin_delete_user',{id:user.id}) }}">
+                            <button class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script>
+        function validationModal() {
+            var data = $('#formUser').serialize();
+            $.ajax({
+                type: 'POST',
+                data: data,
+                url: $('#formUser').attr('action'),
+                beforeSend: function () {
+                    document.getElementById("loaderInt1").style.display = "block";
+                },
+                success: function (data) {
+                    $("#registrationForm").html(data);
+                    document.getElementById("loaderInt1").style.display = "none";
+                },
+                error: function () {
+                    alert("Error ajax");
+                    document.getElementById("loaderInt1").style.display = "none";
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
+{% block title %}
+    {{ parent() }} | comptes
+{% endblock %}
+
+

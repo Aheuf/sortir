@@ -19,7 +19,7 @@
                             <a class="nav-link" href="{{ path('sortie') }}"><i class="bi bi-house"></i> Accueil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_account_show',{id:app.user.id}) }}"><i class="bi bi-person"></i> Mon profil</a>
+                            <a class="nav-link" href="{{ path('accountlist',{id:app.user.id}) }}"><i class="bi bi-person"></i> Mon profil</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-danger" href="{{ path('app_logout') }}"><i class="bi bi-box-arrow-left"></i> Se déconnecter</a>
