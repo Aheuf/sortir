@@ -3,7 +3,14 @@
 {% block title %}{{ parent() }} | {{ user.nom }} {{ user.prenom }}{% endblock %}
 
 {% block body %}
-
+    <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mon Profil</li>
+        </ol>
+    </nav>
+    <br>
     <div class="container">
         {% if app.user.avatar %}
             <img class="img-fluid img-thumbnail rounded-circle col-sm-6 col-md-3 float-end" src="{{ asset('img/'~user.avatar) }}"

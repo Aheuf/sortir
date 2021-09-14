@@ -35,9 +35,18 @@
 {% endblock %}
 
 {% block body %}
+    <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Creation d'une Sortie</li>
+        </ol>
+    </nav>
+    <br>
+
     <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
         <div>
-            <h2 class="text-center mt-5">Créer une sortie</h2>
+            <h2 class="text-center mt-5">Creation d'une Sortie</h2>
         </div>
         <div>
             {{ form_start(sortieForm) }}

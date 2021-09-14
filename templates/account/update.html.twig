@@ -1,7 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
+    <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('accountlist',{id:app.user.id}) }}">Mon Profil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Modifier mon compte</li>
+        </ol>
+    </nav>
+    <br>
     <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
         <h1 class="text-center mt-5">Modifier mon compte</h1>
         {{ form_start(UpdateAccountForm) }}

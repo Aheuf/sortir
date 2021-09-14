@@ -31,8 +31,16 @@
 {% endblock %}
 
 {% block body %}
-
-
+    <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Panneau de controle</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Gestion des Utilisateurs</li>
+        </ol>
+    </nav>
+    <br>
+    <h2 class="text-center">Gestion des Utilisateurs</h2>
     <br>
     <div class="container">
         <!-- Button trigger modal -->
@@ -46,11 +54,11 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="utilisateurModalLabel">Modal title</h5>
+                        <h5 class="modal-title" id="utilisateurModalLabel">Création d'un compte</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <h1 class="text-center">Créer un compte</h1>
+                        <h1 class="text-center">Renseignement</h1>
                         {{ form_start(registrationForm, {'action': path('admin_users'), 'method': 'post', 'id':'formUserAdmin'}) }}
                         {{ form_row(registrationForm.nom) }}
                         {{ form_row(registrationForm.prenom) }}

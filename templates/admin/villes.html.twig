@@ -6,7 +6,15 @@
 
 {% block body %}
     <br>
-    <h2 class="text-center">Gerer les Villes</h2>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('admin_dashboard') }}">Panneau de controle</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Gestion des Villes</li>
+        </ol>
+    </nav>
+    <br>
+    <h2 class="text-center">Gestion des Villes</h2>
     <h3>Filtrer les Villes: </h3>
     {{ form_start(form) }}
     <div class="input-group mb-3">

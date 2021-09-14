@@ -2,6 +2,14 @@
 
 {% block body %}
     <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Panneau de controle</li>
+        </ol>
+    </nav>
+    <br>
+
     <h2 style="text-align: center">Panneau de controle de: {{ app.user.prenom ~ ' ' ~ app.user.nom }} </h2>
     <br> <br>
 
