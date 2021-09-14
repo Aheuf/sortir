@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+    <br>
+    <h2 class="text-center">Gerer les Villes</h2>
+    <h3>Filtrer les Villes: </h3>
+    {{ form_start(formSortieEtat) }}
+    <div class="input-group mb-3">
+        {{ form_row(formSortieEtat.recherche) }}
+        {{ form_row(formSortieEtat.query) }}
+    </div>
+    <a
+            href="{{ path('admin_sorties') }}">Retirer filtre</a>
+
+    {{ form_end(formSortieEtat) }}
+
+
+    <br>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr class="text-center">
+                <th>Organisateur</th>
+                <th>Nom de la sorties</th>
+                <th>Nombre de Participant</th>
+                <th>Date de sortie</th>
+                <th>Details</th>
+                <th>Etat de la sortie</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for sortie in sorties %}
+                <tr>
+                    <form method="post" action="{{ path('admin_cancel_sortie',{'id':sortie.id}) }}">
+
+                        <td>{{ sortie.participant.nom }} {{ sortie.participant.prenom }}</td>
+                        <td>{{ sortie.nom }}</td>
+                        <td>{{ sortie.participants|length  ~'/'~ sortie.nbInscriptionMax }}</td>
+                        <td>{{ sortie.dateHeureDebut|date('d-m-Y') }}</td>
+                        <td>
+                            <div class="alert alert-primary flex text-center ">
+                                <a style="text-decoration:none"
+                                   href="{{ path('sortie_detail', {'id':sortie.id}) }}">
+                                    <i class="bi bi-info-circle-fill fs-4 "></i> Détail
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+
+                            {% if sortie.etat.libelle != etatCancel.libelle %}
+                                <div class=" alert alert-primary flex text-center">
+                                    Etat : {{ sortie.etat.libelle }} |
+                                    <button type="submit" class="btn btn-danger"> Annulée
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger flex text-center">
+                                    <i class="bi bi-exclamation-triangle-fill fs-4"></i> {{ sortie.etat.libelle }}
+                                </div>
+                            {% endif %}
+
+                        </td>
+                    </form>
+                </tr>
+            {% endfor %}
+
+
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
