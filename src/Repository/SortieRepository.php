@@ -70,4 +70,18 @@ class SortieRepository extends ServiceEntityRepository
         $results = $query->getResult();
         return $results;
     }
+
+    public function findByDate()
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+
+        $queryBuilder->where('s.dateLimiteInscription > :dateLimite');
+        $queryBuilder->setParameter('dateLimite', date('Y-m-d H:i:s', strtotime('-1 month')));
+
+        $query = $queryBuilder->getQuery();
+        //dd($query);
+        $results = $query->getResult();
+        //dd($results);
+        return $results;
+    }
 }

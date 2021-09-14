@@ -92,7 +92,7 @@
             <tbody>
 
             {% for sortie in sorties %}
-            <tr>
+            <tr class="align-middle">
                 <th scope="col">{{ sortie.getnom() }}</th>
                 <th scope="col">{{ sortie.getDateHeureDebut()|date('d-m-Y') }}</th>
                 <th scope="col">{{ sortie.getDateLimiteInscription()|date('d-m-Y') }}</th>
@@ -101,7 +101,9 @@
 
                 <th scope="col">{% for inscrit in sortie.getParticipants().toArray() %}
                         {% if inscrit == app.user %}
-                        <i class="bi bi-check-lg" style="color: white"></i>
+                        <div class="ms-3">
+                            <i class="bi bi-check-lg" style="color: white"></i>
+                        </div>
                         {% endif %}
                 {% endfor %}</th>
                 <th scope="col">{{ sortie.getParticipant().getPrenom() }}</th>
