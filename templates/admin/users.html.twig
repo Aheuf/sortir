@@ -1,5 +1,35 @@
 {% extends 'base.html.twig' %}
 
+{% block javascripts %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        document.getElementById("emmerdeur").addEventListener("click", function validationNewUser() {
+            let data = $("#formUserAdmin").serialize();
+            $.ajax({
+                type: "POST",
+                data: data,
+                url: $("#formUserAdmin").attr("action"),
+                beforeSend: function () {
+                    document.getElementById("loaderInt1").style.display = "block";
+                },
+                success: function (data) {
+                    $("#registrationForm").html(data);
+                    document.getElementById("loaderInt1").style.display = "none";
+                },
+                error: function () {
+                    alert("Erreur Ajax");
+                    document.getElementById('loaderInt1').style.display = "none";
+                }
+
+            });
+
+        })
+    </script>
+
+{% endblock %}
+
 {% block body %}
 
 
@@ -21,29 +51,18 @@
                     </div>
                     <div class="modal-body">
                         <h1 class="text-center">Créer un compte</h1>
-                        {{ form_start(registrationForm, {'action': path('admin_users'), 'method': 'POST', 'id':'formUser'}) }}
+                        {{ form_start(registrationForm, {'action': path('admin_users'), 'method': 'post', 'id':'formUserAdmin'}) }}
                         {{ form_row(registrationForm.nom) }}
                         {{ form_row(registrationForm.prenom) }}
                         {{ form_row(registrationForm.pseudo) }}
-                        <div class="d-none">
-                            {{ form_row(registrationForm.avatar, {required:false}) }}
-                            {{ form_row(registrationForm.plainPassword,{required:false}) }}
-                        </div>
-                        <label for="campus">Campus</label>
-                        <select name="campus" id="campus" class="form-select">
-                            {% for campus in allCampus %}
-                                <option value="{{ campus.id }}">{{ campus.nom }}</option>
-                            {% endfor %}
-                        </select>
-
+                        {{ form_row(registrationForm.estRattacheA) }}
                         {{ form_row(registrationForm.telephone) }}
                         {{ form_row(registrationForm.email) }}
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            <input type="submit" class="btn btn-outline-success my-5 submitBtn"
-                                   onclick="validationModal();" value="submit" name="submitAction"><i
-                                    class="bi bi-person-plus"></i> Créer un compte
-                            </input>
+                            <input class="btn medium primary-bg" name="submitAction" id="emmerdeur"
+                                   type="submit"
+                                   value="Submit"/>
                         </div>
                         {{ form_end(registrationForm) }}
                     </div>
@@ -98,36 +117,11 @@
         {% endfor %}
     </table>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
 
 
 {% endblock %}
 
-{% block javascripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script>
-        function validationModal() {
-            var data = $('#formUser').serialize();
-            $.ajax({
-                type: 'POST',
-                data: data,
-                url: $('#formUser').attr('action'),
-                beforeSend: function () {
-                    document.getElementById("loaderInt1").style.display = "block";
-                },
-                success: function (data) {
-                    $("#registrationForm").html(data);
-                    document.getElementById("loaderInt1").style.display = "none";
-                },
-                error: function () {
-                    alert("Error ajax");
-                    document.getElementById("loaderInt1").style.display = "none";
-                }
-            })
-        }
-    </script>
-{% endblock %}
+
 
 {% block title %}
     {{ parent() }} | comptes

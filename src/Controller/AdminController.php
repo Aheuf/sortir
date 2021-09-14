@@ -11,6 +11,7 @@ use App\Form\VilleType;
 use App\Repository\CampusRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\VilleRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -202,22 +203,29 @@ class AdminController extends AbstractController
         $allCampus = $campusRepository->findAll();
 
         $form = $this->createForm(RegistrationFormType::class, $userRegisterAdmin);
+        $form->add('estRattacheA', EntityType::class,
+            ['label' => 'Campus',
+                'class' => Campus::class,
+                'choice_label' => 'nom',
+                'required' => true
+            ]);
+        $form->remove('plainPassword');
+        $form->remove('avatar');
         $form->handleRequest($request);
 
 
         if ($request->getMethod() == "POST") {
-            if ($request->request->get("submitAction") == "submit") {
+            if ($request->request->get("submitAction") == "Submit") {
+
                 $userRegisterAdmin->setAdministrateur(0);
                 $userRegisterAdmin->setActif(1);
-                $campus = $campusRepository->findOneBy(['id' => $request->get('campus')]);
-                $userRegisterAdmin->setEstRattacheA($campus);
                 $userRegisterAdmin->setPassword(
                     $passwordEncoder->encodePassword(
                         $userRegisterAdmin,
                         'Pa$$w0rd'));
+
                 $userRegisterAdmin->setRoles(["ROLE_USER"]);
-                $campus = $repository->findOneBy(['id' => $request->get('campus')]);
-                $userRegisterAdmin->setEstRattacheA($campus);
+
 
                 dd($userRegisterAdmin);
                 $entityManager = $this->getDoctrine()->getManager();
