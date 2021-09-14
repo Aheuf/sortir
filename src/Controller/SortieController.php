@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Etat;
+use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\CreateSortieType;
+use App\Form\LieuType;
 use App\Form\UpdateSortieType;
 use App\Repository\CampusRepository;
 use App\Repository\EtatRepository;
+use App\Repository\LieuRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
@@ -31,7 +34,7 @@ class SortieController extends AbstractController
         $sorties = $sortieRepository->findByDate();
         $rechercheForm = $this->createForm(rechercheType::class);
 
-        if($rechercheForm->handleRequest($request)->isSubmitted()) {
+        if ($rechercheForm->handleRequest($request)->isSubmitted()) {
             $sortiesData = $rechercheForm->getData();
             //dd($sortiesData);
             $sorties = $sortieRepository->findByResearch($sortiesData, $security);
@@ -105,33 +108,49 @@ class SortieController extends AbstractController
     }
 
     /**
-     * @Route("/sortie/creer_sortie/{id}", name="sortie_create")
+     * @Route("/sortie/creer_sortie/{idOrganisateur}", name="sortie_create")
      */
-    public function create(int $id,
-                           Request $request,
-                           CampusRepository $campusRepository,
-                           VilleRepository $villeRepository,
+    public function create(int                    $idOrganisateur,
+                           Request                $request,
+                           CampusRepository       $campusRepository,
+                           VilleRepository        $villeRepository,
+                           LieuRepository         $lieuRepository,
                            EntityManagerInterface $entityManager): Response
     {
         //notre entité vide
         $sortie = new Sortie();
+        $lieu = new Lieu();
 
         //recupere toutes les villes
         $villes = $villeRepository->findAll();
 
         //notre formulaire, associée à l'entité vide
         $sortieForm = $this->createForm(CreateSortieType::class, $sortie);
+        $lieuForm = $this->createForm(LieuType::class, $lieu);
 
         //récupère les données du form et les injecte dans notre $sortie
         $sortieForm->handleRequest($request);
+        $lieuForm->handleRequest($request);
+
+        //si le formulaire de lieu est soumis et valide...
+        if ($request->getMethod() == "POST") {
+            if ($request->request->get("submitLieuAction") == "Enregistrement") {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($lieu);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Le lieu à été créé');
+                return $this->redirect($_SERVER['HTTP_REFERER']);
+            }
+        }
 
         //si le formulaire est soumis et valide...
-        if ($sortieForm->isSubmitted() && $sortieForm->isValid()){
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
 
             //On récupère et stock l'info de l'id de l'organisateur
             $ligneOrganisateur = $this->getDoctrine()
                 ->getRepository(Participant::class)
-                ->find($id);
+                ->find($idOrganisateur);
             $sortie->setParticipant($ligneOrganisateur);
 
             //récuperer et stocker dans la sortie le campus de l'organisateur
@@ -174,14 +193,15 @@ class SortieController extends AbstractController
         //affiche le formulaire
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $sortieForm->createView(),
-            'villes' => $villes
+            'villes' => $villes,
+            'lieuForm' => $lieuForm->createView()
         ]);
     }
 
     /**
      * @Route("/sortie/detail_sortie/{id}", name="sortie_detail")
      */
-    public function detail(int $id,
+    public function detail(int              $id,
                            CampusRepository $campusRepository,
                            SortieRepository $sortieRepository): Response
     {
@@ -189,7 +209,7 @@ class SortieController extends AbstractController
         $sortie = $sortieRepository->find($id);
 
         //s'il n'existe pas en bdd, on déclenche une erreur 404
-        if (!$sortie){
+        if (!$sortie) {
             throw $this->createNotFoundException('Cette sortie n\'existe pas. Désolé!');
         }
 
@@ -201,48 +221,48 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/modifier_sortie/{id}", name="sortie_modifier")
      */
-    public function modify(int $id,Request $request, SortieRepository $sortieRepository, EtatRepository $repository, EntityManagerInterface $entityManager): Response
+    public function modify(int $id, Request $request, SortieRepository $sortieRepository, EtatRepository $repository, EntityManagerInterface $entityManager): Response
     {
 
         $sortie = $sortieRepository->find($id);
-        $form = $this->createForm(UpdateSortieType::class,$sortie);
+        $form = $this->createForm(UpdateSortieType::class, $sortie);
 
         $form->handleRequest($request);
-        if (!$form->isSubmitted()){
+        if (!$form->isSubmitted()) {
             $form['dateHeureDebut']->setData($sortie->getDateHeureDebut());
             $form['dateLimiteInscription']->setData($sortie->getDateLimiteInscription());
         }
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             if ($form->getClickedButton() && 'save' === $form->getClickedButton()->getName()) {
-                $sortie->setEtat($repository->findOneBy(['libelle'=>'En création']));
+                $sortie->setEtat($repository->findOneBy(['libelle' => 'En création']));
             } else {
-                $sortie->setEtat($repository->findOneBy(['libelle'=>'Ouvert']));
+                $sortie->setEtat($repository->findOneBy(['libelle' => 'Ouvert']));
             }
             $entityManager->flush();
-            return $this->redirectToRoute('sortie_detail',['id'=>$sortie->getId()]);
+            return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
         }
 
-        return $this->render('sortie/modify.html.twig', ["sortie" => $sortie, 'UpdateSortieForm'=>$form->createView()]);
+        return $this->render('sortie/modify.html.twig', ["sortie" => $sortie, 'UpdateSortieForm' => $form->createView()]);
     }
 
     /**
      * @Route("/sortie/annuler_sortie/{id}", name="sortie_annuler")
      */
-    public function cancel(int $id, SortieRepository $sortieRepository, EtatRepository $repository,EntityManagerInterface $entityManager): Response
+    public function cancel(int $id, SortieRepository $sortieRepository, EtatRepository $repository, EntityManagerInterface $entityManager): Response
     {
         //récupère cette sortie en fonction de l'id présent dans l'URL
         $sortie = $sortieRepository->find($id);
-        $etat = $repository->findOneBy(['libelle'=>'Annulée']);
+        $etat = $repository->findOneBy(['libelle' => 'Annulée']);
         $sortie->setEtat($etat);
         $entityManager->flush();
 
         //s'il n'existe pas en bdd, on déclenche une erreur 404
-        if (!$sortie){
+        if (!$sortie) {
             throw $this->createNotFoundException('Cette sortie n\'existe pas. Désolé!');
         }
-        $this->addFlash('danger','la sortie à été supprimée');
+        $this->addFlash('danger', 'la sortie à été supprimée');
         return $this->redirectToRoute('sortie');
     }
 

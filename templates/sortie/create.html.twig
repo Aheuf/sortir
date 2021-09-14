@@ -4,6 +4,36 @@
     {{ parent() }} | Créer une sortie
 {% endblock %}
 
+{% block javascripts %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        document.getElementById("submitLieuId").addEventListener("click", function validationNewLieu() {
+            let data = $("#formCreateLieu").serialize();
+            $.ajax({
+                type: "POST",
+                data: data,
+                url: $("#formCreateLieu").attr("action"),
+                beforeSend: function () {
+                    document.getElementById("loaderInt1").style.display = "block";
+                },
+                success: function (data) {
+                    $("#lieuForm").html(data);
+                    document.getElementById("loaderInt1").style.display = "none";
+                },
+                error: function () {
+                    alert("Erreur Ajax");
+                    document.getElementById('loaderInt1').style.display = "none";
+                }
+
+            });
+
+        })
+    </script>
+
+{% endblock %}
+
 {% block body %}
     <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
         <div>
@@ -18,7 +48,8 @@
             {{ form_row(sortieForm.nbInscriptionMax) }}
             {{ form_row(sortieForm.duree) }} minutes
             {{ form_row(sortieForm.infoSortie) }}
-        </div>-
+        </div>
+        -
         <div>
             {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
 
@@ -30,7 +61,7 @@
             </select>
 
             {{ form_row(sortieForm.lieuSortie) }}
-
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modalCreateLieu"> + Ajout d'un nouveau lieu</button>
             <div>
                 Rue :
             </div>
@@ -45,8 +76,39 @@
             </div>
             <br>
 
-                <a class="btn btn-outline-danger" href="{{ path('sortie') }}">Annuler</a>
+            <a class="btn btn-outline-danger" href="{{ path('sortie') }}">Annuler</a>
             {{ form_end(sortieForm) }}
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalCreateLieu" tabindex="-1" aria-labelledby="lieuModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="lieuModalLabel">Creation d'un nouveau lieu: </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h1 class="text-center">Renseignement: </h1>
+                    {{ form_start(lieuForm, {'action': path('sortie_create',{idOrganisateur:app.user.id}), 'method': 'post', 'id':'formCreateLieu'}) }}
+                    {{ form_row(lieuForm.LieuDansVille, {'attr': {'class':'form-control'}}) }}
+                    {{ form_row(lieuForm.nom) }}
+                    {{ form_row(lieuForm.rue) }}
+                    {{ form_row(lieuForm.latitude) }}
+                    {{ form_row(lieuForm.longitude) }}
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <input class="btn btn-outline-success my-5" name="submitLieuAction" id="submitLieuId"
+                               type="submit"
+                               value="Enregistrement"/>
+                    </div>
+                    {{ form_end(lieuForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

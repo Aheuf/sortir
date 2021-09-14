@@ -9,15 +9,16 @@
             <div class="d-flex justify-content-end">
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('sortie') }}"><i class="bi bi-house"></i> Accueil</a>
+                        </li>
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ path('admin_dashboard') }}"><i class="bi bi-menu-button-wide-fill"></i> Panneau de controle</a>
                             </li>
 
                         {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('sortie') }}"><i class="bi bi-house"></i> Accueil</a>
-                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('accountlist',{id:app.user.id}) }}"><i class="bi bi-person"></i> Mon profil</a>
                         </li>
