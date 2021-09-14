@@ -22,7 +22,7 @@
         <div>
             {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
 
-            <label for="ville">Ville</label>
+            <label for="ville">Ville :</label>
             <select name="ville" id="ville">
                 {% for ville in villes %}
                     <option value="{{ ville.id }}">{{ ville.nom }}</option>
