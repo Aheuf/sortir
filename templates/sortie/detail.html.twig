@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    {# <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded"> #}
+    <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
         <div>
             <h2 class="text-center mt-5">Afficher une sortie</h2>
         </div>
@@ -13,10 +13,10 @@
             Nom de la sortie : {{ sortie.nom }}
         </div>
         <div>
-            Date et heure de la sortie : {{ sortie.dateHeureDebut|date('d-m-Y') }}
+            Date et heure de la sortie : {{ sortie.dateHeureDebut|date('d/m/Y h:m') }}
         </div>
         <div>
-            Date limite d'inscription : {{ sortie.dateLimiteInscription|date('d-m-Y') }}
+            Date limite d'inscription : {{ sortie.dateLimiteInscription|date('d/m/Y') }}
         </div>
         <div>
             Nombre de places : {{ sortie.nbInscriptionMax }}
@@ -29,28 +29,56 @@
         </div>-
 
         <div>
-            Campus :
-            {# Campus : {{ sortie.campus }} #}{#, {value:app.user.estRattacheA.nom} }} #}
+            Campus : {{ sortie.campus.nom }}
         </div>
         <div>
-            Lieu :
-            {# Lieu : {{ sortie.lieuSortie }} #}
+            Lieu : {{ sortie.lieuSortie.nom }}
         </div>
         <div>
-            Rue :
+            Rue : {{ sortie.lieuSortie.rue }}
         </div>
         <div>
-            Code Postal :
+            Code Postal : {{ sortie.lieuSortie.lieuDansVille.codePostal }}
         </div>
         <div>
-            Latitude :
+            Latitude : {{ sortie.lieuSortie.latitude }}
         </div>
         <div>
-            Longitude :
+            Longitude : {{ sortie.lieuSortie.longitude }}
         </div>-
 
-        <div>
-            Liste des particpants inscrits :
+        <div class="col-12 my-5">
+            <table class="table table-dark table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Pseudo</th>
+                    <th scope="col">Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                Liste des participants inscrits :
+
+                {# {% for estInscrit in sortie %}    #}
+                    <tr class="align-middle">
+                        <th scope="col">{{ sortie.getParticipant.pseudo }}</th>
+                        <th scope="col">{{ sortie.getParticipant().getPrenom() ~' '~ sortie.getParticipant().getNom()|upper }}</th>
+    {#
+                        <th scope="col">{% for inscrit in sortie.getParticipants().toArray() %}
+                                {% if inscrit == app.user %}
+                                    <div class="ms-3">
+                                        <i class="bi bi-check-lg" style="color: white"></i>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}</th>
+                        <th scope="col">
+                        </th>
+    #}
+                    </tr>
+                {# {% endfor %}    #}
+
+                </tbody>
+            </table>
         </div>
-    {# </div> #}
+    </div>
 {% endblock %}
