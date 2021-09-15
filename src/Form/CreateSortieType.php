@@ -4,14 +4,19 @@ namespace App\Form;
 
 use App\Entity\Lieu;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CreateSortieType extends AbstractType
@@ -36,44 +41,44 @@ class CreateSortieType extends AbstractType
                 'label' => 'Campus : ',
                 'attr'=>['disabled'=>true,'class'=>'form-control']])
 
-            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
+            ->add('ville', EntityType::class, [
+                'mapped'=>false,
+                'class'=> Ville::class,
+                'choice_label' => 'nom',
+                'placeholder' => 'ville',
+                'attr'=>['class'=>'form-control']
+            ])
+
+            ->add('lieuSortie', ChoiceType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Lieu : ',
-                //quelle est la classe à afficher ici ?
-                'class' => Lieu::class,
-                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
-                'choice_label' => 'nom'])
-/*
-            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
-                'label' => 'Rue : ',
-                //quelle est la classe à afficher ici ?
-                'class' => Lieu::class,
-                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
-                'choice_label' => 'rue'])
+                'placeholder' => 'Lieu (choisir une ville)'])
 
-            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
-                'label' => 'Code Postale : ',
-                //quelle est la classe à afficher ici ?
-                'class' => Lieu::class,
-                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
-                'choice_label' => 'codePostal'])
-
-            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
-                'label' => 'Latitude : ',
-                //quelle est la classe à afficher ici ?
-                'class' => Lieu::class,
-                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
-                'choice_label' => 'latitude'])
-
-            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
-                'label' => 'Longitude : ',
-                //quelle est la classe à afficher ici ?
-                'class' => Lieu::class,
-                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
-                'choice_label' => 'longitude'])
-*/
             ->add('save', SubmitType::class, ['label' => 'Enregistrer', 'attr'=>['class'=>'btn btn-outline-warning']])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie','attr'=>['class'=>'btn btn-outline-success']])
         ;
+
+        $formModifier = function(FormInterface $form, Ville $ville = null){
+            $lieux = null === $ville ? [] : $ville->getLieus();
+
+            $form->add('lieuSortie', EntityType::class, [
+                'class'=>Lieu::class,
+                'choices'=> $lieux,
+                'choice_label'=>'nom',
+                'placeholder' => 'Lieu (choisir une ville)',
+                'label' => 'Lieu : ',
+                'attr' => ['class'=>'form-control']
+            ]);
+        };
+
+        $builder->get('ville')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function(FormEvent $event) use ($formModifier){
+                $ville = $event->getForm()->getData();
+                $formModifier($event->getForm()->getParent(), $ville);
+
+            }
+        );
+
     }
 
     public function configureOptions(OptionsResolver $resolver)

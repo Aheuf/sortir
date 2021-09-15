@@ -4,36 +4,6 @@
     {{ parent() }} | Créer une sortie
 {% endblock %}
 
-{% block javascripts %}
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script>
-        document.getElementById("submitLieuId").addEventListener("click", function validationNewLieu() {
-            let data = $("#formCreateLieu").serialize();
-            $.ajax({
-                type: "POST",
-                data: data,
-                url: $("#formCreateLieu").attr("action"),
-                beforeSend: function () {
-                    document.getElementById("loaderInt1").style.display = "block";
-                },
-                success: function (data) {
-                    $("#lieuForm").html(data);
-                    document.getElementById("loaderInt1").style.display = "none";
-                },
-                error: function () {
-                    alert("Erreur Ajax");
-                    document.getElementById('loaderInt1').style.display = "none";
-                }
-
-            });
-
-        })
-    </script>
-
-{% endblock %}
-
 {% block body %}
     <br>
     <nav aria-label="breadcrumb">
@@ -57,17 +27,9 @@
             {{ form_row(sortieForm.nbInscriptionMax) }}
             {{ form_row(sortieForm.duree) }} minutes
             {{ form_row(sortieForm.infoSortie) }}
-        </div>
-        -
-        <div>
-            {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
 
-            <label for="ville">Ville :</label>
-            <select class="form-control" name="ville" id="ville">
-                {% for ville in villes %}
-                    <option value="{{ ville.id }}">{{ ville.nom }}</option>
-                {% endfor %}
-            </select>
+            {{ form_row(sortieForm.campus, {value:app.user.estRattacheA.nom}) }}
+            {{ form_row(sortieForm.ville) }}
 
             {{ form_row(sortieForm.lieuSortie) }}
             <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#modalCreateLieu"> + Ajout d'un nouveau lieu</button>
@@ -120,4 +82,66 @@
         </div>
     </div>
 
+
+{# listener #}
+    <script>
+        window.onload = () => {
+            //recherche de la ville
+            let ville = document.querySelector("#create_sortie_ville");
+            ville.addEventListener("change", function(){
+                let form = this.closest("form");
+                let data = this.name + "=" + this.value;
+
+                fetch(form.action, {
+                    method: form.getAttribute("method"),
+                    body: data,
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded; " +
+                            "charset:utf-8"
+                    }
+                })
+                .then(response => response.text())
+                .then(html =>{
+                    let content = document.createElement("html");
+                    content.innerHTML = html;
+                    let nouveauSelect = content.querySelector("#create_sortie_lieuSortie");
+                    document.querySelector("#create_sortie_lieuSortie").replaceWith(nouveauSelect);
+                })
+            })
+        }
+    </script>
+
 {% endblock %}
+
+{% block javascripts %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+    <script>
+        document.getElementById("submitLieuId").addEventListener("click", function validationNewLieu() {
+            let data = $("#formCreateLieu").serialize();
+            $.ajax({
+                type: "POST",
+                data: data,
+                url: $("#formCreateLieu").attr("action"),
+                beforeSend: function () {
+                    document.getElementById("loaderInt1").style.display = "block";
+                },
+                success: function (data) {
+                    $("#lieuForm").html(data);
+                    document.getElementById("loaderInt1").style.display = "none";
+                },
+                error: function () {
+                    alert("Erreur Ajax");
+                    document.getElementById('loaderInt1').style.display = "none";
+                }
+
+            });
+
+        })
+    </script>
+
+{% endblock %}
+
+
