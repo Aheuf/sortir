@@ -65,6 +65,7 @@ class AccountController extends AbstractController
             if ($form['avatar']->getData()){
                 $nbRand = random_int(1000000000,2000000000);
                 $avatar = $form['avatar']->getData();
+                dd($avatar);
                 $nomSplit = explode('.',$avatar->getClientOriginalName());
                 $nomSplit[0] = $user->getNom().$user->getPrenom().$nbRand;
                 $nom = implode('.',$nomSplit);

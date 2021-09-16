@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block body %}
+    <br>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('sortie') }}">Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Afficher une Sortie</li>
+        </ol>
+    </nav>
+    <br>
+
     <div class="container mt-5 col-sm-8 col-md-5 bg-light rounded">
         <div>
             <h2 class="text-center mt-5">Afficher une sortie</h2>
@@ -26,8 +35,7 @@
         </div>
         <div>
             Description et infos : {{ sortie.infoSortie }}
-        </div>-
-
+        </div>
         <div>
             Campus : {{ sortie.campus.nom }}
         </div>
@@ -45,8 +53,7 @@
         </div>
         <div>
             Longitude : {{ sortie.lieuSortie.longitude }}
-        </div>-
-
+        </div>
         <div class="col-12 my-5">
             <table class="table table-dark table-striped">
                 <thead>
@@ -56,10 +63,9 @@
                 </tr>
                 </thead>
                 <tbody>
-
                 Liste des participants inscrits :
 
-                {# {% for estInscrit in sortie %}    #}
+                {% for estInscrit in participants %}
                     <tr class="align-middle">
                         <th scope="col">{{ sortie.getParticipant.pseudo }}</th>
                         <th scope="col">{{ sortie.getParticipant().getPrenom() ~' '~ sortie.getParticipant().getNom()|upper }}</th>
@@ -75,7 +81,7 @@
                         </th>
     #}
                     </tr>
-                {# {% endfor %}    #}
+                {% endfor %}
 
                 </tbody>
             </table>

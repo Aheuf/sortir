@@ -208,18 +208,14 @@ class SortieController extends AbstractController
      * @Route("/sortie/detail_sortie/{id}", name="sortie_detail")
      */
     public function detail(int              $id,
-                           //CampusRepository $campusRepository,
-                           //Request          $request,
+                           ParticipantRepository $participantRepository,
                            SortieRepository $sortieRepository): Response
     {
         //récupère cette sortie en fonction de l'id présent dans l'URL
         $sortie = $sortieRepository->find($id);
 
-        //$campus = $campusRepository->findOneBy(['id'=>$request->get('campus')]);
-        //$sortie = $campus->getNom();
-        //$sortie->setEstRattacheA($campus);
-
-        //dd($sortie);
+        //recupere toutes les particpants de cette sortie
+        $particpants = $participantRepository->findAll();
 
         //s'il n'existe pas en bdd, on déclenche une erreur 404
         if (!$sortie) {
@@ -228,7 +224,7 @@ class SortieController extends AbstractController
 
         return $this->render('sortie/detail.html.twig', [
             "sortie" => $sortie,
-            //"campus" => $campus
+            "participants" => $particpants
         ]);
     }
 
