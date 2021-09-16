@@ -3,11 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Campus;
-use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Ville;
 use App\Form\CampusType;
-use App\Form\CreateSortieType;
+use App\Form\FilesType;
 use App\Form\RegistrationFormType;
 use App\Form\VilleType;
 use App\Repository\CampusRepository;
@@ -16,14 +15,24 @@ use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Console\Input\ArrayInput;
+
+
 
 /**
  * @Route("/admin", name="admin_")
@@ -92,7 +101,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/update_villes/{id}", name="update_ville")
      */
-    public function UpdateVille( int $id): Response
+    public function UpdateVille(int $id): Response
     {
         $em = $this->getDoctrine()->getManager();
         $ville = $em->getRepository('App:Ville')->find($id);
@@ -169,7 +178,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/update_campus/{id}", name="update_campus")
      */
-    public function UpdateCampus( int $id): Response
+    public function UpdateCampus(int $id): Response
     {
         $em = $this->getDoctrine()->getManager();
         $ville = $em->getRepository('App:Campus')->find($id);
@@ -195,24 +204,68 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/download",name="download")
+     */
+    public function download(): Response
+    {
+        // send the file contents and force the browser to download it
+        return $this->file('dataFormat/fichierExemple.csv');
+    }
+
+
+
+    /**
      * @Route ("/users",name="users")
      */
-    public function Users(ParticipantRepository $repository, UserPasswordEncoderInterface $passwordEncoder, Request $request)
+    public function Users(KernelInterface $kernel,ParticipantRepository $repository, UserPasswordEncoderInterface $passwordEncoder, Request $request)
     {
         $users = $repository->findAll();
-
         $userRegisterAdmin = new Participant();
+        $filesystem = new Filesystem();
 
-        $form = $this->createForm(RegistrationFormType::class, $userRegisterAdmin);
-        $form->add('estRattacheA', EntityType::class,
+
+
+        $formFiles = $this->createForm(FilesType::class);
+        $formFiles->handleRequest($request);
+
+        $formUser = $this->createForm(RegistrationFormType::class, $userRegisterAdmin);
+        $formUser->add('estRattacheA', EntityType::class,
             ['label' => 'Campus',
                 'class' => Campus::class,
                 'choice_label' => 'nom',
                 'required' => true
             ]);
-        $form->remove('plainPassword');
-        $form->remove('avatar');
-        $form->handleRequest($request);
+        $formUser->remove('plainPassword');
+        $formUser->remove('avatar');
+        $formUser->handleRequest($request);
+
+        if ($formFiles->isSubmitted() && $formFiles->isValid()) {
+            /** @var UploadedFile $file */
+            $file = $formFiles['telechargement']->getData();
+
+            $folder='./data';
+            $filesystem->remove(['symlink', $folder, 'participant.csv']);
+
+            $file->move($folder,'participant.csv');
+
+            $application = new Application($kernel);
+            $application->setAutoExit(false);
+
+            $input = new ArrayInput([
+                'command' => 'app:import-command',
+            ]);
+
+            // You can use NullOutput() if you don't need the output
+            $output = new BufferedOutput();
+            $application->run($input, $output);
+
+            // return the output, don't use if you used NullOutput()
+            $content = $output->fetch();
+
+            // return new Response(""), if you used NullOutput()
+
+            return $this->redirect($_SERVER['HTTP_REFERER']);
+        }
 
 
         if ($request->getMethod() == "POST") {
@@ -238,7 +291,7 @@ class AdminController extends AbstractController
         }
 
 
-        return $this->render('admin/users.html.twig', ['users' => $users, 'registrationForm' => $form->createView()]);
+        return $this->render('admin/users.html.twig', ['users' => $users, 'registrationForm' => $formUser->createView(), 'filesForm' => $formFiles->createView()]);
     }
 
     /**
@@ -304,7 +357,7 @@ class AdminController extends AbstractController
 
         }
         return $this->render('admin/sorties.html.twig', [
-            'sorties' => $sortie, 'etatCancel'=>$etatCancel,'formSortieEtat' => $form->createView()
+            'sorties' => $sortie, 'etatCancel' => $etatCancel, 'formSortieEtat' => $form->createView()
         ]);
     }
 
