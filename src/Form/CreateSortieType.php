@@ -42,43 +42,25 @@ class CreateSortieType extends AbstractType
                 'attr'=>['disabled'=>true,'class'=>'form-control']])
 
             ->add('ville', EntityType::class, [
-                'mapped'=>false,
-                'class'=> Ville::class,
+                'mapped' => false,
+                'class' => Ville::class,
                 'choice_label' => 'nom',
-                'placeholder' => 'ville',
-                'attr'=>['class'=>'form-control']
+                'placeholder' => 'Ville',
+                'attr'=>['class'=>'form-control'],
+                'label' => 'Ville',
+                'required' => false
             ])
 
-            ->add('lieuSortie', ChoiceType::class, ['attr'=>['class'=>'form-control'],
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
                 'label' => 'Lieu : ',
-                'placeholder' => 'Lieu (choisir une ville)'])
+                //quelle est la classe à afficher ici ?
+                'class' => Lieu::class,
+                //quelle propriété utiliser pour les <option> dans la liste déroulante ?
+                'choice_label' => 'nom'])
 
             ->add('save', SubmitType::class, ['label' => 'Enregistrer', 'attr'=>['class'=>'btn btn-outline-warning']])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie','attr'=>['class'=>'btn btn-outline-success']])
         ;
-
-        $formModifier = function(FormInterface $form, Ville $ville = null){
-            $lieux = null === $ville ? [] : $ville->getLieus();
-
-            $form->add('lieuSortie', EntityType::class, [
-                'class'=>Lieu::class,
-                'choices'=> $lieux,
-                'choice_label'=>'nom',
-                'placeholder' => 'Lieu (choisir une ville)',
-                'label' => 'Lieu : ',
-                'attr' => ['class'=>'form-control']
-            ]);
-        };
-
-        $builder->get('ville')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function(FormEvent $event) use ($formModifier){
-                $ville = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $ville);
-
-            }
-        );
-
     }
 
     public function configureOptions(OptionsResolver $resolver)
