@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 use function Doctrine\ORM\QueryBuilder;
@@ -86,6 +88,9 @@ class SortieRepository extends ServiceEntityRepository
 
             $sortiesNonInscrit = $this->findBySortiesUserNonInscrit($security->getUser()->getId());
 
+
+            dd($sortiesNonInscrit);
+
             // On prend les sorties qui sont dans le tableau avec IN
             $queryBuilder->andWhere($queryBuilder->expr()->in('s.id', $sortiesNonInscrit));
         }
@@ -129,24 +134,21 @@ class SortieRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findBySortiesUserNonInscrit($user) {
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
+     */
+    public function findBySortiesUserNonInscrit($user): array
+    {
 
-        // Ne pas oublier d'ajouter :
-        // use Doctrine\ORM\Query\ResultSetMapping;
-        $rsm = new ResultSetMapping();
+        $sql = "SELECT e.id FROM sortie e WHERE e.id NOT IN (SELECT ps.sortie_id FROM participant_sortie ps WHERE ps.participant_id =  $user)";
 
-        $sql = "SELECT id FROM sortie
-                WHERE participant_id
-                   NOT IN (SELECT participant_id
-                           FROM participant_sortie
-                           WHERE participant_id != ?)";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $dd = $stmt->fetchAll();
 
-        $q = $this->entityManager->createNativeQuery($sql, $rsm)->setParameter(1, $user);
-        $sorties = $q->getResult();
+        return $dd;
 
-        //dd($sorties);
-
-        return $sorties;
     }
 
 }
