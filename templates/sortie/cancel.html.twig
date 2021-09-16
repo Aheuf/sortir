@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-
+    {{ parent() }} | Annuler une sortie
 {% endblock %}
 
 {% block body %}
@@ -23,10 +23,10 @@
         Date et heure de la sortie : {{ sortie.dateHeureDebut|date('d-m-Y') }}
     </div>
     <div>
-        Campus :
+        Campus : {{ sortie.campus.nom }}
     </div>
     <div>
-        Lieu :
+        Lieu : {{ sortie.lieuSortie.nom }}
     </div>
     <div>
         Motif :
