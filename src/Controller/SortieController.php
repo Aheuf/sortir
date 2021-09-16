@@ -166,7 +166,7 @@ class SortieController extends AbstractController
                 //On récupère l'info du clik pour passer l'état dans celui de la sortie créé
                 $ligneEtat = $this->getDoctrine()
                     ->getRepository(Etat::class)
-                    ->find(1);
+                    ->findOneBy(['libelle' => 'Créée']);
                 $sortie->setEtat($ligneEtat);
 
                 //sauvegarde en bdd
@@ -180,7 +180,7 @@ class SortieController extends AbstractController
                 //On récupère l'info du clik pour passer l'état dans celui de la sortie créé
                 $ligneEtat = $this->getDoctrine()
                     ->getRepository(Etat::class)
-                    ->find(2);
+                    ->findOneBy(['libelle' => 'Ouverte']);
                 $sortie->setEtat($ligneEtat);
 
                 //sauvegarde en bdd
@@ -251,7 +251,7 @@ class SortieController extends AbstractController
             if ($form->getClickedButton() && 'save' === $form->getClickedButton()->getName()) {
                 $sortie->setEtat($repository->findOneBy(['libelle' => 'Créée']));
             } else {
-                $sortie->setEtat($repository->findOneBy(['libelle' => 'Oouverte']));
+                $sortie->setEtat($repository->findOneBy(['libelle' => 'Ouverte']));
             }
             $entityManager->flush();
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
