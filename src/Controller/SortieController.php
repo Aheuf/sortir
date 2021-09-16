@@ -246,7 +246,7 @@ class SortieController extends AbstractController
             if ($form->getClickedButton() && 'save' === $form->getClickedButton()->getName()) {
                 $sortie->setEtat($repository->findOneBy(['libelle' => 'Créée']));
             } else {
-                $sortie->setEtat($repository->findOneBy(['libelle' => 'Oouverte']));
+                $sortie->setEtat($repository->findOneBy(['libelle' => 'Ouverte']));
             }
             $entityManager->flush();
             return $this->redirectToRoute('sortie_detail', ['id' => $sortie->getId()]);
