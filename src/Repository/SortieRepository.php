@@ -2,10 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Participant;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
+use function Doctrine\ORM\QueryBuilder;
 
 
 /**
@@ -77,16 +79,15 @@ class SortieRepository extends ServiceEntityRepository
         if ($sortiesData['noninscrit'] == true) {
             $user = $security->getUser()->getId();
 
-            //$queryBuilder->innerJoin('s.participants', 'p');
-            //$queryBuilder->andWhere('p.id != :id');
-            //$queryBuilder->setParameter('id', $user);
+            $queryBuilder2 = $this->createQueryBuilder('p');
+            $queryBuilder2->select('p.participants.id');
+            $queryBuilder2->from(Participant::class, 'pc');
+            $queryBuilder2->where('pc.id != :user');
+            $queryBuilder2->setParameter('user', $user);
+            //dd($queryBuilder2->getDQL());
 
-            $queryBuilder->innerJoin('s.participants', 'p');
-            $queryBuilder->andWhere(
-                $queryBuilder->expr()->notIn('p.id', ':id')
-            );
-            $queryBuilder->setParameter('id', $user);
-
+            $queryBuilder->andWhere($queryBuilder->expr()->notIn('s.id', $queryBuilder2->getDQL()));
+            //dd($queryBuilder->getDQL());
         }
 
 

@@ -92,14 +92,19 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/publier/{sortieId}/{userId}", name="sortie_publier")
      */
-    public function publier($sortieId, $userId, SortieRepository $sortieRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
+    public function publier($sortieId, $userId, SortieRepository $sortieRepository, EtatRepository $etatRepository, ParticipantRepository $participantRepository, EntityManagerInterface $entityManager): Response
     {
-        //$sortie = $sortieRepository->find($sortieId);
+        $sortie = $sortieRepository->find($sortieId);
         $user = $participantRepository->find($userId);
         if ($this->getUser() != $user) {
             $this->addFlash('Warn', 'Vous ne pouvez pas publier la sortie d\'un autre utilisateur !');
         } else {
 
+            $etat = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
+            $sortie->setEtat($etat);
+
+            $entityManager->flush();
 
             $this->addFlash('success', 'Votre sortie a bien été publiée !');
         }
