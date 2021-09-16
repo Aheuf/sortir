@@ -5,9 +5,11 @@ namespace App\Repository;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Security;
 use function Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 
 /**
@@ -18,6 +20,8 @@ use function Doctrine\ORM\QueryBuilder;
  */
 class SortieRepository extends ServiceEntityRepository
 {
+
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Sortie::class);
@@ -77,17 +81,13 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($sortiesData['noninscrit'] == true) {
-            $user = $security->getUser()->getId();
+            // Tableau PHP liste des id des sorties auxquelles le user n'est pas inscrit
+            // cf. https://www.inanzz.com/index.php/post/vjyi/where-not-in-example-with-doctrine
 
-            $queryBuilder2 = $this->createQueryBuilder('p');
-            $queryBuilder2->select('p.participants.id');
-            $queryBuilder2->from(Participant::class, 'pc');
-            $queryBuilder2->where('pc.id != :user');
-            $queryBuilder2->setParameter('user', $user);
-            //dd($queryBuilder2->getDQL());
+            $sortiesNonInscrit = $this->findBySortiesUserNonInscrit($security->getUser()->getId());
 
-            $queryBuilder->andWhere($queryBuilder->expr()->notIn('s.id', $queryBuilder2->getDQL()));
-            //dd($queryBuilder->getDQL());
+            // On prend les sorties qui sont dans le tableau avec IN
+            $queryBuilder->andWhere($queryBuilder->expr()->in('s.id', $sortiesNonInscrit));
         }
 
 
@@ -127,6 +127,26 @@ class SortieRepository extends ServiceEntityRepository
         return $qb
             ->getQuery()
             ->getResult();
+    }
+
+    public function findBySortiesUserNonInscrit($user) {
+
+        // Ne pas oublier d'ajouter :
+        // use Doctrine\ORM\Query\ResultSetMapping;
+        $rsm = new ResultSetMapping();
+
+        $sql = "SELECT id FROM sortie
+                WHERE participant_id
+                   NOT IN (SELECT participant_id
+                           FROM participant_sortie
+                           WHERE participant_id != ?)";
+
+        $q = $this->entityManager->createNativeQuery($sql, $rsm)->setParameter(1, $user);
+        $sorties = $q->getResult();
+
+        //dd($sorties);
+
+        return $sorties;
     }
 
 }

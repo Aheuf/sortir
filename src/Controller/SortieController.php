@@ -15,6 +15,7 @@ use App\Repository\LieuRepository;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Repository\VilleRepository;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\rechercheType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
