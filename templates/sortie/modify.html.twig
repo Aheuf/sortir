@@ -22,6 +22,9 @@
         {{ form_row(UpdateSortieForm.lieuSortie, {value:sortie.lieuSortie}) }}
         {{ form_end(UpdateSortieForm) }}
         <form action="{{ path('sortie_annuler',{id:sortie.id}) }}">
+            <button class="btn btn-outline-secondary">Supprimer la sortie</button>
+        </form>
+        <form action="{{ path('sortie') }}">
             <button class="btn btn-outline-danger">Annuler</button>
         </form>
     </div>
