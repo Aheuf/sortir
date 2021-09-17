@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Lieu;
 use App\Entity\Sortie;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -24,7 +26,10 @@ class UpdateSortieType extends AbstractType
             ->add('nbInscriptionMax',null,['attr'=>['class'=>'form-control']])
             ->add('infoSortie',null,['attr'=>['class'=>'form-control']])
             ->add('campus',TextType::class,['disabled'=>true, 'attr'=>['class'=>'form-control']])
-            ->add('lieuSortie',ChoiceType::class,['attr'=>['class'=>'form-control']])
+            ->add('lieuSortie', EntityType::class, ['attr'=>['class'=>'form-control'],
+                'label' => 'Lieu : ',
+                'class' => Lieu::class,
+                'choice_label' => 'nom'])
 
             ->add('save', SubmitType::class, ['label' => 'Enregistrer', 'attr'=>['class'=>'btn btn-outline-warning']])
             ->add('publish', SubmitType::class, ['label' => 'Publier une sortie','attr'=>['class'=>'btn btn-outline-success']])
